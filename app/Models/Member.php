@@ -1,13 +1,14 @@
 <?php namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\Notifiable;
 
 use App\Traits\Models\TagTrait;
 use Carbon\Carbon;
 
 class Member extends Model
 {
-	use TagTrait;
+	use TagTrait, Notifiable;
 	// protected $connection = 'mysql-live';
 
 	public static function boot() {
@@ -151,4 +152,13 @@ class Member extends Model
 			'default_operator' => 'AND'
 		]);
 	}
+    /**
+     * Route notifications for the Nexmo channel.
+     *
+     * @return string
+     */
+    public function routeNotificationForNexmo()
+    {
+        return $this->sms_phone;
+    }
 }

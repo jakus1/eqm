@@ -1,3 +1,3 @@
 # eqm
 
-just s small project to help us communicate better
+Just a small project to help us communicate better
