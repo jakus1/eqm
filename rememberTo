@@ -1,0 +1,7 @@
+# how to start the tunnel
+ngrok http --host-header=eq-municator.local 80
+
+http://973f3341.ngrok.io/api/listeners/nexmo
+http://973f3341.ngrok.io/api/listeners/nexmo-delivery-receipt
+http://973f3341.ngrok.io/api/listeners/mailgun
+

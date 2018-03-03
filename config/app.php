@@ -150,7 +150,7 @@ return [
         /*
          * Package Service Providers...
          */
-
+        NotificationChannels\Twilio\TwilioProvider::class,
         /*
          * Application Service Providers...
          */

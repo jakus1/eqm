@@ -3,16 +3,19 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Notifications\SendSMS;
+use App\Notifications\SendEmail;
 use App\Models\Member;
+use App\Models\Tag;
+use App\Jobs\ImportUploadedFile;
 
 class DevelopController extends Controller
 {
 	public function getJake()
 	{
-		$member = Member::create(['first'=>'Austin','last'=>'Sperry','email'=>'austinsperry@gmail.com','sms_phone'=>'4805705560']);
-		// $member = Member::find(2);
-		$tag = $member->tags()->create(['tag'=>'d3']);
-		return Member::with('tags')->find($member->id);
+		$filename = "temp/roster.csv";
+		dispatch(new ImportUploadedFile($filename));
+		return dd(config());
 		return 'this is jake';
 	}
 }
