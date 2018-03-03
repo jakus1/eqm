@@ -45,6 +45,7 @@ class SendEmail extends Notification implements ShouldQueue
 	{
 		$subject = (strlen(trim($this->subject)) > 2 )?$this->subject:'Take a look';
 		return (new MailMessage)
+					->replyTo($this->incoming_request['sender'])
 					->subject($subject)
 					->line('Hey,')
 					->line($this->incoming_request['stripped-text'])

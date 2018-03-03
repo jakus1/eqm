@@ -48,6 +48,7 @@ class SendSMS extends Notification implements ShouldQueue
 
 	public function toNexmo($notifiable)
 	{
+		
 		return (new NexmoMessage)
 			->content($this->incoming_request['stripped-text']);
 	}

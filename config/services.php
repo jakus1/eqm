@@ -39,4 +39,10 @@ return [
 		'secret' => env('NEXMO_SECRET'),
 		'sms_from' => '18017973060',
 	],
+	'twilio' => [
+		'username' => env('TWILIO_USERNAME'),
+		'password' => env('TWILIO_PASSWORD'),
+		'account_sid' => env('TWILIO_ACCOUNT_SID'), //optional
+		'from' => env('TWILIO_FROM'), // optional
+	],
 ];

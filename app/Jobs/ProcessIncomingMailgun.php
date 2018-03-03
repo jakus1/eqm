@@ -10,6 +10,8 @@ use App\Notifications\SendSMS;
 use App\Notifications\SendEmail;
 use App\Models\Tag;
 
+use Log;
+
 class ProcessIncomingMailgun implements ShouldQueue
 {
 	use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
@@ -33,17 +35,20 @@ class ProcessIncomingMailgun implements ShouldQueue
 	public function handle()
 	{
 		$data = $this->data;
+		// Log::info('PROCESSING Incoming MAILGUN: '.print_r($data, true));
 		// first determine the verb
 		// $subject = "sms email d2 Canning assignment that we need to have filled";
 		$subject = $this->data['subject'];
 		$verbs = [];
-		if(str_contains($subject, 'sms')) {
+		if(str_contains(strtolower($subject), 'sms')) {
 			$verbs[] = 'sms';
-		}if(str_contains($subject, 'email')) {
+		}
+		if(str_contains(strtolower($subject), 'email')) {
 			$verbs[] = 'email';
 		}
 
 		if(count($verbs) == 0) {
+			Log::error('NO VERB FOUND');
 			return;
 		}
 		$find = ['sms','email'];
@@ -63,15 +68,17 @@ class ProcessIncomingMailgun implements ShouldQueue
 			$tags[$part] = $part;
 		}
 		$members = Tag::with('taggable')->whereIn('tag',$tags)->get();
+		// Log::info('MEMBERS:'.print_r($members->toArray(), true));
 		if(in_array('sms',$verbs)) {
 			// do the sms part
-
+			// Log::info('Sending the SMS');
 			foreach($members as $member) {
 				$member->taggable->notify(new SendSMS($data));
 			}
 		}
 		if(in_array('email',$verbs)) {
 			// do the email part
+			// Log::info('Sending the Email');
 			foreach($members as $member) {
 				$member->taggable->notify(new SendEmail($data,$subject));
 			}

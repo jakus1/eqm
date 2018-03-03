@@ -2,13 +2,14 @@
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 use App\Traits\Models\TagTrait;
 use Carbon\Carbon;
 
 class Member extends Model
 {
-	use TagTrait, Notifiable;
+	use TagTrait, Notifiable, SoftDeletes;
 	// protected $connection = 'mysql-live';
 
 	public static function boot() {
