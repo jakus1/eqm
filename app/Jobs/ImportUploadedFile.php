@@ -69,11 +69,12 @@ class ImportUploadedFile implements ShouldQueue
 				$messageLines[] = "Updated email and sms_phone for record ".$offset."...".$record['First Name']." ".$record['Last Name'].".";
 				if(!empty($record['tags'])){
 					$tags = [];
-					if(str_contains($record['tags'], '_')) {
+					if(str_contains($record['tags'], ' ')) {
 						$tags = explode(" ",$record['tags']);
 					} else {
 						$tags[] = $record['tags'];
 					}
+					$member->tags()->delete();
 					foreach($tags as $tag){
 						$member->tags()->create(['tag'=>$tag]);
 					}
