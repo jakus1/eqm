@@ -34,6 +34,7 @@ class ProcessIncomingMailgun implements ShouldQueue
 	 */
 	public function handle()
 	{
+		$messageLines = [];
 		$data = $this->data;
 		// Log::info('PROCESSING Incoming MAILGUN: '.print_r($data, true));
 		// first determine the verb
@@ -74,6 +75,7 @@ class ProcessIncomingMailgun implements ShouldQueue
 			// Log::info('Sending the SMS');
 			foreach($members as $member) {
 				$member->taggable->notify(new SendSMS($data));
+				$messageLines[] = "Sent an email message to: ".$member->first." ".$member->last.".";
 			}
 		}
 		if(in_array('email',$verbs)) {
@@ -81,9 +83,12 @@ class ProcessIncomingMailgun implements ShouldQueue
 			// Log::info('Sending the Email');
 			foreach($members as $member) {
 				$member->taggable->notify(new SendEmail($data,$subject));
+				$messageLines[] = "Sent a text message to: ".$member->first." ".$member->last.".";
 			}
 		}
 		// $message = $this->data['stripped-text'];
+		Mail::to('jake@barlowshomes.com')
+			->send(new ImportFinished($messageLines));
 
 
 	}

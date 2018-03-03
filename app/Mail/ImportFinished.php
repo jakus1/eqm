@@ -28,6 +28,6 @@ class ImportFinished extends Mailable implements ShouldQueue
 	 */
 	public function build()
 	{
-		return $this->subject('The importer file has finished running')->view('email.import_notification');
+		return $this->subject('The importer file has finished running')->view('email.admin_notifications');
 	}
 }
