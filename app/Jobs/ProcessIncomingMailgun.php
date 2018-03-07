@@ -20,6 +20,7 @@ class ProcessIncomingMailgun implements ShouldQueue
 	use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
 	public $data;
+
 	/**
 	 * Create a new job instance.
 	 *
@@ -39,9 +40,8 @@ class ProcessIncomingMailgun implements ShouldQueue
 	{
 		$messageLines = [];
 		$data = $this->data;
-		Log::info('PROCESSING Incoming MAILGUN: '.print_r($data, true));
+
 		// first determine the verb
-		// $subject = "sms email d2 Canning assignment that we need to have filled";
 		$subject = $this->data['subject'];
 		$verbs = [];
 		if(str_contains(strtolower($subject), 'sms')) {
@@ -67,33 +67,25 @@ class ProcessIncomingMailgun implements ShouldQueue
 			if($membersqry->count() == 0) {
 				continue;
 			}
-			// $members = $membersqry->get();
 			$subject = trim(str_replace($part,'',$subject));
 			$tags[$part] = $part;
 		}
 		$members = Tag::with('taggable')->whereIn('tag',$tags)->get();
-		Log::info('MEMBERS:'.print_r($members->toArray(), true));
 		if(in_array('sms',$verbs)) {
 			// do the sms part
-			Log::info('Sending the SMS');
 			foreach($members as $member) {
-				Log::info('SMS to MEMBER:'.print_r($member->toArray(), true));
 				$member->taggable->notify(new SendSMS($data));
 				$messageLines[] = "Sent an sms message to: ".$member->taggable->first." ".$member->taggable->last.".";
 			}
 		}
 		if(in_array('email',$verbs)) {
 			// do the email part
-			// Log::info('Sending the Email');
 			foreach($members as $member) {
 				$member->taggable->notify(new SendEmail($data,$subject));
 				$messageLines[] = "Sent an email message to: ".$member->taggable->first." ".$member->taggable->last.".";
 			}
 		}
-		// $message = $this->data['stripped-text'];
 		Mail::to('jake@barlowshomes.com')
 			->send(new MessagesSent($messageLines));
-
-
 	}
 }

@@ -6,6 +6,8 @@ use Log;
 use App\Models\Member;
 use App\Notifications\SendSMS;
 use App\Jobs\ProcessIncomingMailgun;
+use App\Jobs\ForwardIncomingSMS;
+
 
 
 // ngrok http --host-header=eq-municator.local 80
@@ -23,7 +25,7 @@ class IncomingMessageController extends Controller
 	{
 		$data = request()->all();
 		Log::info('Message POST:'.print_r($data, true));
-		// ProcessIncomingMailgun::dispatch($data);
+		ForwardIncomingSMS::dispatch($data);
 		return response()->json(['status' => 'ok']);
 	}
 	public function nexmoReceipt()
