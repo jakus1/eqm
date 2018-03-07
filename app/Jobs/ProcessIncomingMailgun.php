@@ -79,7 +79,7 @@ class ProcessIncomingMailgun implements ShouldQueue
 			foreach($members as $member) {
 				Log::info('SMS to MEMBER:'.print_r($member->toArray(), true));
 				$member->taggable->notify(new SendSMS($data));
-				$messageLines[] = "Sent an email message to: ".$member->taggable->first." ".$member->taggable->last.".";
+				$messageLines[] = "Sent an sms message to: ".$member->taggable->first." ".$member->taggable->last.".";
 			}
 		}
 		if(in_array('email',$verbs)) {
@@ -87,7 +87,7 @@ class ProcessIncomingMailgun implements ShouldQueue
 			// Log::info('Sending the Email');
 			foreach($members as $member) {
 				$member->taggable->notify(new SendEmail($data,$subject));
-				$messageLines[] = "Sent a text message to: ".$member->taggable->first." ".$member->taggable->last.".";
+				$messageLines[] = "Sent an email message to: ".$member->taggable->first." ".$member->taggable->last.".";
 			}
 		}
 		// $message = $this->data['stripped-text'];

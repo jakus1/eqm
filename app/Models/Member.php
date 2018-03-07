@@ -160,6 +160,6 @@ class Member extends Model
      */
     public function routeNotificationForNexmo()
     {
-        return $this->sms_phone;
+        return '1'.$this->sms_phone;
     }
 }
