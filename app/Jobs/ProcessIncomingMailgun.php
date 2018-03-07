@@ -39,7 +39,7 @@ class ProcessIncomingMailgun implements ShouldQueue
 	{
 		$messageLines = [];
 		$data = $this->data;
-		// Log::info('PROCESSING Incoming MAILGUN: '.print_r($data, true));
+		Log::info('PROCESSING Incoming MAILGUN: '.print_r($data, true));
 		// first determine the verb
 		// $subject = "sms email d2 Canning assignment that we need to have filled";
 		$subject = $this->data['subject'];
@@ -75,8 +75,9 @@ class ProcessIncomingMailgun implements ShouldQueue
 		Log::info('MEMBERS:'.print_r($members->toArray(), true));
 		if(in_array('sms',$verbs)) {
 			// do the sms part
-			// Log::info('Sending the SMS');
+			Log::info('Sending the SMS');
 			foreach($members as $member) {
+				Log::info('SMS to MEMBER:'.print_r($member->toArray(), true));
 				$member->taggable->notify(new SendSMS($data));
 				$messageLines[] = "Sent an email message to: ".$member->taggable->first." ".$member->taggable->last.".";
 			}
