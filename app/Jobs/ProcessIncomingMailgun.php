@@ -9,7 +9,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use App\Notifications\SendSMS;
 use App\Notifications\SendEmail;
 
-use App\Mail\ImportFinished;
+use App\Mail\MessagesSent;
 use App\Models\Tag;
 
 use Log;
@@ -72,13 +72,13 @@ class ProcessIncomingMailgun implements ShouldQueue
 			$tags[$part] = $part;
 		}
 		$members = Tag::with('taggable')->whereIn('tag',$tags)->get();
-		// Log::info('MEMBERS:'.print_r($members->toArray(), true));
+		Log::info('MEMBERS:'.print_r($members->toArray(), true));
 		if(in_array('sms',$verbs)) {
 			// do the sms part
 			// Log::info('Sending the SMS');
 			foreach($members as $member) {
 				$member->taggable->notify(new SendSMS($data));
-				$messageLines[] = "Sent an email message to: ".$member->first." ".$member->last.".";
+				$messageLines[] = "Sent an email message to: ".$member->taggable->first." ".$member->taggable->last.".";
 			}
 		}
 		if(in_array('email',$verbs)) {
@@ -86,12 +86,12 @@ class ProcessIncomingMailgun implements ShouldQueue
 			// Log::info('Sending the Email');
 			foreach($members as $member) {
 				$member->taggable->notify(new SendEmail($data,$subject));
-				$messageLines[] = "Sent a text message to: ".$member->first." ".$member->last.".";
+				$messageLines[] = "Sent a text message to: ".$member->taggable->first." ".$member->taggable->last.".";
 			}
 		}
 		// $message = $this->data['stripped-text'];
 		Mail::to('jake@barlowshomes.com')
-			->send(new ImportFinished($messageLines));
+			->send(new MessagesSent($messageLines));
 
 
 	}
