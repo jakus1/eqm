@@ -43,6 +43,7 @@ class ForwardIncomingSMS implements ShouldQueue
 		}
 		Log::info('JOB:ForwardIncomingSMS data:'.print_r($data, true));
 		Mail::to('jake@barlowshomes.com')
+			->to('jake@barlowshomes.com')
 			->send(new IncomingSms($data));
 		
 
