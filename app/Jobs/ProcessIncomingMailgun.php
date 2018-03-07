@@ -8,6 +8,8 @@ use Illuminate\Foundation\Bus\Dispatchable;
 
 use App\Notifications\SendSMS;
 use App\Notifications\SendEmail;
+
+use App\Mail\ImportFinished;
 use App\Models\Tag;
 
 use Log;
