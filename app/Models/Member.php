@@ -57,6 +57,7 @@ class Member extends Model
 		'first',
 		'last',
 		'email',
+		'status',
 		'sms_phone',
 		'description'
 	];

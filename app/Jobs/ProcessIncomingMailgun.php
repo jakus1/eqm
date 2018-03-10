@@ -44,19 +44,23 @@ class ProcessIncomingMailgun implements ShouldQueue
 		// first determine the verb
 		$subject = $this->data['subject'];
 		$verbs = [];
-		if(str_contains(strtolower($subject), 'sms')) {
+		$service = false;
+		if(str_contains(strtolower($subject), ' sms ')) {
 			$verbs[] = 'sms';
 		}
-		if(str_contains(strtolower($subject), 'email')) {
+		if(str_contains(strtolower($subject), ' email ')) {
 			$verbs[] = 'email';
+		}
+		if(str_contains(strtolower($subject), ' svc ')) {
+			$service = true;
 		}
 
 		if(count($verbs) == 0) {
 			Log::error('NO VERB FOUND');
 			return;
 		}
-		$find = ['sms','email'];
-		$replace = ['',''];
+		$find = ['sms','email','svc'];
+		$replace = ['','',''];
 		$subject = str_replace($find,$replace,$subject);
 		$subject = trim($subject);
 		$parts = explode(" ",$subject);
@@ -70,19 +74,23 @@ class ProcessIncomingMailgun implements ShouldQueue
 			$subject = trim(str_replace($part,'',$subject));
 			$tags[$part] = $part;
 		}
-		$members = Tag::with('taggable')->whereIn('tag',$tags)->get();
+		$result = Tag::with('taggable')->whereIn('tag',$tags)->get();
+		$members = $result->pluck('taggable')->all();
+		if($service) {
+			$members = Members::where('status','Active')->get();
+		}
 		if(in_array('sms',$verbs)) {
 			// do the sms part
 			foreach($members as $member) {
-				$member->taggable->notify(new SendSMS($data));
-				$messageLines[] = "Sent an sms message to: ".$member->taggable->first." ".$member->taggable->last.".";
+				$member->notify(new SendSMS($data));
+				$messageLines[] = "Sent an sms message to: ".$member->first." ".$member->last.".";
 			}
 		}
 		if(in_array('email',$verbs)) {
 			// do the email part
 			foreach($members as $member) {
-				$member->taggable->notify(new SendEmail($data,$subject));
-				$messageLines[] = "Sent an email message to: ".$member->taggable->first." ".$member->taggable->last.".";
+				$member->notify(new SendEmail($data,$subject));
+				$messageLines[] = "Sent an email message to: ".$member->first." ".$member->last.".";
 			}
 		}
 		Mail::to('jake@barlowshomes.com')
