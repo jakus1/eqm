@@ -42,9 +42,10 @@ class ForwardIncomingSMS implements ShouldQueue
 			$data['member'] = $member;
 		}
 		Log::info('JOB:ForwardIncomingSMS data:'.print_r($data, true));
-		Mail::to('jake@barlowshomes.com')
-			->to('jake@barlowshomes.com')
-			->send(new IncomingSms($data));
+		foreach(config('site.sms_forward_emails') as $email){
+			Mail::to($email)
+				->send(new IncomingSms($data));
+		}
 		
 
 		//
