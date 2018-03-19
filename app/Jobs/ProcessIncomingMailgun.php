@@ -57,7 +57,7 @@ class ProcessIncomingMailgun implements ShouldQueue
 		}
 
 		if(count($verbs) == 0) {
-			Log::error('NO VERB FOUND');
+			Log::error('NO VERB FOUND in: '.$subject);
 			return;
 		}
 		$find = ['sms','email','svc'];
