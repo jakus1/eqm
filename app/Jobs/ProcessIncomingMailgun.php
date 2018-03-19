@@ -78,7 +78,7 @@ class ProcessIncomingMailgun implements ShouldQueue
 		$result = Tag::with('taggable')->whereIn('tag',$tags)->get();
 		$members = $result->pluck('taggable')->all();
 		if($service) {
-			$members = Members::where('status','Active')->get();
+			$members = Member::where('status','Active')->get();
 		}
 		if(in_array('sms',$verbs)) {
 			// do the sms part
