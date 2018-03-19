@@ -11,6 +11,7 @@ use App\Notifications\SendEmail;
 
 use App\Mail\MessagesSent;
 use App\Models\Tag;
+use App\Models\Member;
 
 use Log;
 use Mail;

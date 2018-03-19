@@ -14,7 +14,7 @@ class ValidateMailgunWebhook
 		if ($this->verify($request)) {
 			return $next($request);
 		}
-
+		Log::error('Middleware blocked incoming request'.print_r($request->all(), true));
 		abort(Response::HTTP_FORBIDDEN);
 	}
 
