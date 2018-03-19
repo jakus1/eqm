@@ -46,13 +46,13 @@ class ProcessIncomingMailgun implements ShouldQueue
 		$subject = $this->data['subject'];
 		$verbs = [];
 		$service = false;
-		if(str_contains(strtolower($subject), ' sms ')) {
+		if(str_contains(strtolower($subject), 'sms ')) {
 			$verbs[] = 'sms';
 		}
-		if(str_contains(strtolower($subject), ' email ')) {
+		if(str_contains(strtolower($subject), 'email ')) {
 			$verbs[] = 'email';
 		}
-		if(str_contains(strtolower($subject), ' svc ')) {
+		if(str_contains(strtolower($subject), 'svc ')) {
 			$service = true;
 		}
 
