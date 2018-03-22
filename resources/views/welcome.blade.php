@@ -79,7 +79,7 @@
 
             <div class="content">
                 <div class="title m-b-md">
-                    Nothing to see here
+                    Nothing to see here. Intentionally blank
                 </div>
 
             </div>
