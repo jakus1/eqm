@@ -15,7 +15,7 @@ use \Illuminate\Support\Facades\Response;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Member;
 
-class MembersController extends BaseController {
+class MembersController extends Controller {
 
 	/**
 	 * Display a listing of members
@@ -24,8 +24,8 @@ class MembersController extends BaseController {
 	 */
 	public function index()
 	{
-		// $members = Member::all();
-		return view('member.index');
+		$members = Member::all();
+		return view('member.index', compact('members'));
 	}
 
 	/**
@@ -36,6 +36,17 @@ class MembersController extends BaseController {
 	public function create()
 	{
 		return view('member.create');
+	}
+
+	public function store() {
+		$this->validate(request(), [
+			'name' => 'required|max:50',
+		  ]);
+
+		$member = new Member();
+
+		$member->first = request('name'); // need to split
+		// FIXME: Fill in rest
 	}
 
 	/**

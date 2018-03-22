@@ -11,8 +11,10 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', 'MembersController@index')->name('home');
+Route::get('/members/create', 'MembersController@create');
+Route::post('/members', 'MembersController@store');
 
 Route::get('dev/jake', 'DevelopController@getJake');
+
+
