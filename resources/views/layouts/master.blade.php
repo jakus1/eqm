@@ -11,7 +11,7 @@
     <meta name="author" content="">
     <link rel="icon" href="../../favicon.ico">
 
-    <title>Blog Example using Laravel and PHP</title>
+    <title>Elders Quorum</title>
 
     <!-- Bootstrap core CSS -->
     <!-- Latest compiled and minified CSS -->
@@ -29,7 +29,7 @@
 
       <div class="blog-header">
         <h1 class="blog-title">Elders Quorum</h1>
-        <p class="lead blog-description">A description</p>
+        <!--p class="lead blog-description">A description</p-->
       </div>
 
       <div class="row">
