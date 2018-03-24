@@ -95,6 +95,17 @@ class Member extends Model
 	}
 
 	/**
+	 * Scope to search for 'active' members
+	 * by Richard
+	 *
+	 * @param 
+	 * @return collection
+	 */
+	public function scopeActive($query) {
+		return $query->where('status', '=', 'active');
+	}
+
+	/**
 	 * Scope to order records by the most recently changed
 	 *
 	 * by Jake
