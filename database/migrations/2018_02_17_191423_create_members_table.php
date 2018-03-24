@@ -10,12 +10,12 @@ class CreateMembersTable extends Migration
 	{
 		Schema::create('members', function(Blueprint $table) {
 			$table->increments('id');
-			$table->string('status');
+			$table->string('status')->default("active");
 			$table->string('first');
 			$table->string('last');
 			$table->string('email');
 			$table->string('sms_phone');
-			$table->text('description');
+			$table->text('description')->default("");
 			$table->nullableTimestamps();
 			$table->softDeletes();
 		});
