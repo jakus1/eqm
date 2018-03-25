@@ -172,5 +172,14 @@ class Member extends Model
     public function routeNotificationForNexmo()
     {
         return '1'.$this->sms_phone;
-    }
+	}
+	
+	/**
+     * Link to messages from this member.
+     *
+     * @return collection of Messages associated with this member 
+     */
+	// public function messages() {
+	// 	return $this->hasMany(Message::class);
+	// }
 }
