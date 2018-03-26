@@ -11,15 +11,16 @@
 |
 */
 
-Route::get('/', 'MembersController@index')->name('home');
+Route::get('/members', 'MembersController@index')->name('members');
 Route::get('/member/create', 'MembersController@create');
 Route::post('/member', 'MembersController@store');
 Route::get('/member/{member}', 'MembersController@show');
 Route::get('/member/edit/{member}', 'MembersController@edit');
 
-Route::get('/user/create', 'UserController@create');
-Route::post('/user', 'UserController@store');
-Route::get('/user/{user}', 'UserController@show');
+Route::get('/', 'UsersController@index')->name('home');
+Route::get('/user/create', 'UsersController@create');
+Route::post('/user', 'UsersController@store');
+Route::get('/user/{user}', 'UsersController@show');
 
 Route::get('/login', 'SessionsController@create')->name('login');
 Route::post('/login', 'SessionsController@store');

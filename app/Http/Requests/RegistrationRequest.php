@@ -30,7 +30,7 @@ class RegistrationRequest extends FormRequest
     {
         return [
           'name' => 'required',
-          'email' => 'required|email',
+          'email' => 'required|unique:users,email',
           /*
             Note the "confirmed" validation requires an associated
             _confirmation input form
@@ -39,7 +39,8 @@ class RegistrationRequest extends FormRequest
         ];
     }
 
-    public function persist() {
+    public function persist() 
+    {
       $errormsg = "";
       $result = false;
 
@@ -53,13 +54,8 @@ class RegistrationRequest extends FormRequest
       try{
         $user = User::create(compact('name', 'email', 'password'));
       } catch(\Exception $exception){
-        $errormsg = 'Database error! ' . $exception->getCode();
+        Log::error('Database error! '.$exception->getCode());
       }
-
-      // FIXME: 
-      // if (strcmp($errormsg, "")) {
-      //   return Response::json(['success'=>$result,'errormsg'=>$errormsg]);
-      // }
 
       // Sign the user in
       auth()->login($user);

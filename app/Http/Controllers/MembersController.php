@@ -15,30 +15,28 @@ use \Illuminate\Support\Facades\Response;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Member;
 
-class MembersController extends Controller {
+class MembersController extends Controller 
+{
 
 	/**
 	 * Constructor
 	 *
 	 */
-	public function __construct() {
+	public function __construct() 
+	{
 		// You must be signed in to see or create members
 		$this->middleware('auth');
-	  }
+	}
 
 	/**
-	 * Display a listing of members
+	 * Display a listing of members. 
 	 *
 	 * @return Response
 	 */
-	public function index() {
-		if (auth()->check()) {
-			$members = Member::all();
-			return view('member.index', compact('members'));
-		} else {
-			return redirect()->login();
-		}
-	
+	public function index() 
+	{
+		$members = Member::all();
+		return view('member.index', compact('members'));
 	}
 
 	/**
@@ -46,42 +44,38 @@ class MembersController extends Controller {
 	 *
 	 * Redirects to home page after saving new member
 	 */
-	public function create() {
-		if (auth()->check()) {
-			return view('member.create');
-		} else {
-			return redirect()->login();
-		}
+	public function create() 
+	{
+		return view('member.create');
     }
 
 
 	/**
 	 * Store a new member from a POST request
 	 *
-	 * Redirects to home page after saving new member
+	 * @return redirect to home page
 	 */
-	public function store() {
-		if (auth()->check()) {
-			$this->validate(request(), [
-				'first' => 'required',
-				'last' => 'required',
-				'email' => 'required|email',
-				'sms_phone' => "required|numeric"
-			]);
-			
-			$member = new Member();
-	
-			$member->first = request('first');
-			$member->last = request('last');
-			$member->email = request('first');
-			$member->sms_phone = request('sms_phone');
-	
-			$member->save();
-			// Redirect back to home page
-			return redirect()->home();
-		} else {
-			return redirect()->login();
-		}
+	public function store() 
+	{
+		$this->validate(request(), [
+			'first' => 'required',
+			'last' => 'required',
+			'email' => 'required|email',
+			// FIXME: Need to check for something other than numeric here
+			'sms_phone' => "required|numeric"
+		]);
+		
+		$member = new Member();
+
+		$member->first = request('first');
+		$member->last = request('last');
+		$member->email = request('first');
+		$member->sms_phone = request('sms_phone');
+
+		$member->save();
+
+		// Redirect back to home page
+		return redirect()->home(); 
 	}
 	
 	/**
@@ -90,12 +84,9 @@ class MembersController extends Controller {
 	 * @param  int  $member
 	 * @return Response
 	 */
-	public function show(Member $member) {
-		if (auth()->check()) {
-			return view('member.show', compact('member', $member));
-		} else {
-			return redirect()->login();
-		}
+	public function show(Member $member) 
+	{
+		return view('member.show', compact('member'));
 	}
 
 	/**
@@ -104,11 +95,8 @@ class MembersController extends Controller {
 	 * @param  int  $member
 	 * @return Response
 	 */
-	public function edit(Member $member) {
-		if (auth()->check()) {
-			return view('member.edit', compact('member', $member));
-		} else {
-			return redirect()->login();
-		}
+	public function edit(Member $member) 
+	{
+		return view('member.edit', compact('member'));
 	}
 }

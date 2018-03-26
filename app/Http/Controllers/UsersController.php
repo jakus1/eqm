@@ -6,9 +6,28 @@ use Illuminate\Http\Request;
 use App\Http\Requests\RegistrationRequest;
 use App\Models\User;
 
-class UserController extends Controller
+class UsersController extends Controller
 {
-    public function create() {
+    /**
+	 * Primary access point, home
+	 *
+	 * @return members view if logged in, otherwise login
+	 */
+    public function index() 
+    {
+        if (auth()->check()) {
+            return redirect()->route('members');
+        } else {
+            return redirect()->route('login');
+        }
+    }
+    /**
+	 * Display the user creation page. This is available to everyone
+	 *
+	 * @return user creation page
+	 */
+    public function create() 
+    {
         if (auth()->check()) {
             return redirect()->home();
         } else {
@@ -16,14 +35,26 @@ class UserController extends Controller
         }
     }
 
-    public function store(RegistrationRequest $request) {
+    /**
+	 * Display the user creation page
+	 *
+	 * @return home page if successful, otherwise errors will be displayed
+	 */
+    public function store(RegistrationRequest $request) 
+    {
         $request->persist();
         
         // Redirect back to home page
         return redirect()->home();
     }
 
-    public function show(User $user) {
-        return view('user.show', compact('user', $user));
+    public function show(User $user) 
+    {
+        if (auth()->check()) {
+            return view('user.show', compact('user', $user));
+        } else {
+            return redirect()->home();
+        }
+        
     }
 }

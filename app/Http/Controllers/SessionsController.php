@@ -8,20 +8,39 @@ use Illuminate\Support\Facades\Hash;
 class SessionsController extends Controller
 {
 
-  public function __construct() {
+  /**
+	 * Constructor
+	 *
+	 */
+  public function __construct() 
+  {
     /*
       The following means only non-logged in users (guests) will use the
-      functionality in this class, except the destroy method
+      functionality in this class, except the destroy method. Stated 
+      differently, logged in users don't need anything from this class
+      except the logout (destroy) functionality.
     */
     $this->middleware('guest', ['except' => 'destroy']);
 
   }
 
-  public function create() {
+  /**
+	 * Display the login page (ie. create a login session)
+	 *
+	 * @return home page if successful, otherwise errors will be displayed
+	 */
+  public function create() 
+  {
     return view('sessions.create');
   }
 
-  public function store() {
+  /**
+	 * Attempt to register a new user
+	 *
+	 * @return home page if successful, otherwise errors will be displayed
+	 */
+  public function store() 
+  {
     // Attempt to authenticate user
     $email = request('email');
     $password = request('password');
@@ -33,10 +52,16 @@ class SessionsController extends Controller
     }
 
     // Redirect to home or back to login page
-    return redirect()->home();
+    return redirect()->route('home');
   }
 
-  public function destroy() {
+  /**
+	 * Perform a logout of authenticated user
+	 *
+	 * @return home page
+	 */
+  public function destroy() 
+  {
     auth()->logout();
 
     return redirect()->home();
