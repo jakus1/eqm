@@ -48,13 +48,17 @@ class UsersController extends Controller
         return redirect()->home();
     }
 
+    /**
+	 * Display a page to display user
+	 *
+	 * @return home page if successful, otherwise errors will be displayed
+	 */
     public function show(User $user) 
     {
         if (auth()->check()) {
-            return view('user.show', compact('user', $user));
+            return view('user.show', compact('user'));
         } else {
             return redirect()->home();
-        }
-        
+        }  
     }
 }
