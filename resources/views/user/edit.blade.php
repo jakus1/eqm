@@ -6,7 +6,7 @@
 
 	<hr>
 
-		{!! Form::model($user, ['method' => 'post', 'action' => ['UsersController@update', $user]]) !!}
+		{!! Form::model($user, ['method' => 'put', 'action' => ['UsersController@update', $user]]) !!}
 			<div class="form-group">
 				{!! Form::label('name', 'Name:') !!}
 				{!! Form::text('name', null, ['class' => 'form-control']) !!}
