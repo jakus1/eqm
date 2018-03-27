@@ -5,7 +5,8 @@
 	<ul class="list-unstyled">
 		<li><strong>Name: </strong>{{ $member->first }} {{ $member->last }}</li>
 		<li><strong>Email: </strong>{{ $member->email }}</li>
-		<li>FIXME: Add more details</li>
+		<li><strong>Phone: </strong>{{ $member->sms_phone }}</li>
 	</ul>
+	<hr>
 </div>
 @endsection

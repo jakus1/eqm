@@ -15,7 +15,7 @@ use \Illuminate\Support\Facades\Response;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Message;
 
-class MessagesController extends BaseController {
+class MessagesController extends Controller {
 
 	/**
 	 * Display a listing of messages

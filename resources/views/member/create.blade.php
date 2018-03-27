@@ -6,42 +6,34 @@
 
     <hr>
 
-    <!-- Store a post. In the router see the post operation to the /member url -->
-    <form method="POST" action="/member">
-      <!-- csrf is cross site request forgery, where a user modifies the
-           information returned from this web page in the POST submission.
-           Laravel puts this unique ID on the rendered web page, the ID is
-           returned in the post, and compared when performing a save. 
-      -->
-	  {{ csrf_field() }}
-	  
-    <div class="form-group">
-        <label for="first">First Name:</label>
-        <input type="text" class="form-control" id="first" name="first" required>
+		{!! Form::open(['url' => '/member', 'method' => 'post', 'action' => 'MembersController@store']) !!}
+		<div class="form-group">
+			{!! Form::label('first', 'First Name:') !!}
+			{!! Form::text('first', '', ['class' => 'form-control']) !!}
 		</div>
 
 		<div class="form-group">
-        <label for="last">First Name:</label>
-        <input type="text" class="form-control" id="last" name="last" required>
-	  </div>
+			{!! Form::label('last', 'Last Name:') !!}
+			{!! Form::text('last', '', ['class' => 'form-control']) !!}
+		</div>		
 
-	  <div class="form-group">
-				<label for="email">Email:</label>
-				<input type="email" class="form-control" id="email" name="email" required>
-	  </div>
+		<div class="form-group">
+				{!! Form::label('sms_phone', 'Phone for SMS Messages:') !!}
+				{!! Form::text('sms_phone', '', ['class' => 'form-control']) !!}
+		</div>
 
-	  <div class="form-group">
-				<label for="sms_phone">Phone Number:</label>
-				<input type="tel" class="form-control" id="sms_phone" name="sms_phone" required>
-	  </div>
+		<div class="form-group">
+			{!! Form::label('email', 'Email Address:') !!}
+			{!! Form::email('email', ['class' => 'form-control']) !!}
+		</div>
 
-	  <div class="form-group">
-				<button type="submit" class="btn btn-primary">Create Member</button>
-	  </div>
+		<div class="form-group">
+				{!! Form::submit('Create Member', ['class' => 'btn btn-primary']) !!}
+		</div>
 
-	  <div class="form-group">
-			@include ('layouts.errors')
-	  </div>
-    </form>
+		<div class="form-group">
+				@include ('layouts.errors')
+		</div>
+	{!! Form::close() !!}
   </div>
 @endsection

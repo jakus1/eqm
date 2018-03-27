@@ -6,42 +6,34 @@
 
     <hr>
 
-    <!-- Store a post. In the router see the post operation to the /user url -->
-    <form method="POST" action="/user">
-      <!-- csrf is cross site request forgery, where a user modifies the
-           information returned from this web page in the POST submission.
-           Laravel puts this unique ID on the rendered web page, the ID is
-           returned in the post, and compared when performing a save. 
-      -->
-	  {{ csrf_field() }}
-	  
-      <div class="form-group">
-    	<label for="name">Name:</label>
-        <input type="text" class="form-control" id="name" name="name" required>
-	  </div>
+		{!! Form::open(['url' => '/user', 'method' => 'post', 'action' => 'UsersController@store']) !!}
+			<div class="form-group">
+				{!! Form::label('name', 'Name:') !!}
+				{!! Form::text('name', '', ['class' => 'form-control']) !!}
+			</div>
 
-	  <div class="form-group">
-		<label for="email">Email:</label>
-		<input type="email" class="form-control" id="email" name="email" required>
-	  </div>
+			<div class="form-group">
+				{!! Form::label('email', 'Email:') !!}
+				{!! Form::email('email', '', ['class' => 'form-control']) !!}
+			</div>
 
-	  <div class="form-group">
-		<label for="password">Password:</label>
-		<input type="password" class="form-control" id="password" name="password" required>
-	  </div>
+			<div class="form-group">
+				{!! Form::label('password', 'Password:') !!}
+				{!! Form::password('password', ['class' => 'form-control']) !!}
+			</div>
 
-	  <div class="form-group">
-		<label for="password_confirmation">Password Confirmation:</label>
-		<input type="password" class="form-control" id="password_confirmation" name="password_confirmation" required>
-	  </div>
+			<div class="form-group">
+				{!! Form::label('password_confirmation', 'Password Confirmation:') !!}
+				{!! Form::password('password_confirmation', ['class' => 'form-control']) !!}
+			</div>
 
-	  <div class="form-group">
-		<button type="submit" class="btn btn-primary">Create User</button>
-	  </div>
-
-	  <div class="form-group">
-		@include ('layouts.errors')
-	  </div>
-    </form>
+			<div class="form-group">
+					{!! Form::submit('Create User', ['class' => 'btn btn-primary']) !!}
+			</div>
+			
+			<div class="form-group">
+					@include ('layouts.errors')
+			</div>
+		{!! Form::close() !!}
   </div>
 @endsection

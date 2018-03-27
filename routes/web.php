@@ -11,16 +11,19 @@
 |
 */
 
-Route::get('/members', 'MembersController@index')->name('members');
-Route::get('/member/create', 'MembersController@create');
-Route::post('/member', 'MembersController@store');
-Route::get('/member/{member}', 'MembersController@show');
-Route::get('/member/edit/{member}', 'MembersController@edit');
-
 Route::get('/', 'UsersController@index')->name('home');
 Route::get('/user/create', 'UsersController@create');
 Route::post('/user', 'UsersController@store');
 Route::get('/user/{user}', 'UsersController@show');
+Route::post('/user/edit/{user}', 'UsersController@edit');
+
+Route::get('/members', 'MembersController@index')->name('members');
+Route::get('/member/create', 'MembersController@create');
+Route::post('/member', 'MembersController@store');
+Route::get('/member/{member}', 'MembersController@show');
+Route::post('/member/edit/{member}', 'MembersController@edit');
+
+Route::get('/message/create', 'MessagesController.create');
 
 Route::get('/login', 'SessionsController@create')->name('login');
 Route::post('/login', 'SessionsController@store');
