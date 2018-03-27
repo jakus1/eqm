@@ -13,8 +13,8 @@ class CreateMessagesTable extends Migration
 			$table->text('body');
 			$table->nullableTimestamps();
 			$table->softDeletes();
-			$table->integer('member_id')->unsigned()->nullable();
-			$table->foreign('member_id')->references('id')->on('members');
+			$table->integer('user_id')->unsigned()->nullable();
+			$table->foreign('user_id')->references('id')->on('users');
 			$table->integer('communication_id')->unsigned()->nullable();
 			$table->foreign('communication_id')->references('id')->on('communications');
 		});

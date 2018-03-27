@@ -23,7 +23,7 @@ Route::post('/member', 'MembersController@store');
 Route::get('/member/{member}', 'MembersController@show');
 Route::post('/member/edit/{member}', 'MembersController@edit');
 
-Route::get('/message/create', 'MessagesController.create');
+Route::get('/message/create', 'MessagesController@create');
 
 Route::get('/login', 'SessionsController@create')->name('login');
 Route::post('/login', 'SessionsController@store');
