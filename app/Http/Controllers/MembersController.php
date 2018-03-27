@@ -47,8 +47,7 @@ class MembersController extends Controller
 	public function create() 
 	{
 		return view('member.create');
-    }
-
+	}
 
 	/**
 	 * Store a new member from a POST request
