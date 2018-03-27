@@ -10,8 +10,7 @@ class CreateMembersTable extends Migration
 	{
 		Schema::create('members', function(Blueprint $table) {
 			$table->increments('id');
-			// $table->foreign('user_id')->references('id')->on('users');
-			$table->string('status')->default("active");
+			$table->string('status')->default("Active");
 			$table->string('first');
 			$table->string('last');
 			$table->string('email');
