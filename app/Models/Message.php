@@ -57,7 +57,7 @@ class Message extends Model
 	Relationships
 	##############################################################################################*/
 	
-	public function message()
+	public function member()
 	{
 		return $this->belongsTo(\App\Models\Member::class);
 	}
