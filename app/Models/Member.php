@@ -65,7 +65,10 @@ class Member extends Model
 	Relationships
 	##############################################################################################*/
 
-
+    public function messages()
+	{
+		return $this->hasMany(\App\Models\Message::class);
+	}
 
 	/*##############################################################################################
 	scopes

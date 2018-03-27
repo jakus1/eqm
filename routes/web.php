@@ -11,17 +11,11 @@
 |
 */
 
+/* Register a default route */
 Route::get('/', 'UsersController@index')->name('home');
-Route::get('/user/create', 'UsersController@create');
-Route::post('/user', 'UsersController@store');
-Route::get('/user/{user}', 'UsersController@show');
-Route::post('/user/edit/{user}', 'UsersController@edit');
+Route::resource('user', 'UsersController'); // get:/user, get:/user/create, post:/user, get:/user/{user}, get:/user/{user}/edit, put:/user/{user}, delete:/user/{user}
 
-Route::get('/members', 'MembersController@index')->name('members');
-Route::get('/member/create', 'MembersController@create');
-Route::post('/member', 'MembersController@store');
-Route::get('/member/{member}', 'MembersController@show');
-Route::post('/member/edit/{member}', 'MembersController@edit');
+Route::resource('member', 'MembersController'); // get:/member, get:/member/create, post:/member, get:/member/{member}, get:/member/{member}/edit, put:/member/{member}, delete:/member/{member}
 
 Route::get('/message/create', 'MessagesController@create');
 

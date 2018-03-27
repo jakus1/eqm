@@ -6,7 +6,7 @@
   @if (count($members))
 	<ul class="list-unstyled">
 		@foreach ($members as $member)
-			<li><a href="member/{{ $member->id}}"> {{ $member->first }} {{ $member->last }}</a></li>
+			<li><a href="{{ action('MembersController@show', $member->id) }}"> {{ $member->first }} {{ $member->last }}</a></li>
 		@endforeach
 	</ul>
   @endif

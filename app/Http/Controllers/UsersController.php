@@ -16,7 +16,7 @@ class UsersController extends Controller
     public function index() 
     {
         if (auth()->check()) {
-            return redirect()->route('members');
+            return redirect()->action('MembersController@index');
         } else {
             return redirect()->route('login');
         }
@@ -36,7 +36,7 @@ class UsersController extends Controller
     }
 
     /**
-	 * Display the user creation page
+	 * Store a new user
 	 *
 	 * @return home page if successful, otherwise errors will be displayed
 	 */
@@ -47,6 +47,32 @@ class UsersController extends Controller
         // Redirect back to home page
         return redirect()->home();
     }
+
+    	/**
+	 * Save changes to an existing member from a PUT request
+	 *
+	 * @param $member
+	 * @return redirect to show or home page
+	 */
+	public function update(User $user) 
+	{
+        if (auth()->check()) {
+            $this->validate(request(), [
+                'name' => 'required',
+                'password' => 'required|confirmed'
+            ]);
+    
+            $user->name = request('name');
+            $user->password = Hash::make(request('password'));
+    
+            $user->save();
+    
+            // Redirect back to show page
+            return redirect()->action('UsersController@show', $user);     
+        } else {
+            return redirect()->home();
+        }
+	}
 
     /**
 	 * Display a page to display user
@@ -61,4 +87,15 @@ class UsersController extends Controller
             return redirect()->home();
         }  
     }
+
+    /**
+	 * Show the form for editing the specified user.
+	 *
+	 * @param  $user
+	 * @return Response
+	 */
+	public function edit(User $user) 
+	{
+		return view('user.edit', compact('user'));
+	}
 }

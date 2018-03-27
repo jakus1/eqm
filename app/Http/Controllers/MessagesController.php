@@ -13,7 +13,6 @@ use Session;
 use \Illuminate\Support\Facades\Response;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Message;
-use App\Models\User;
 
 class MessagesController extends Controller {
 

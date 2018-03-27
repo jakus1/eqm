@@ -2,23 +2,19 @@
 
 @section('content')
   <div class="col-sm-8 blog-main">
-    <h1>Create a user</h1>
+    <h1>Update {{ $user->name }}</h1>
 
-    <hr>
+	<hr>
 
-		{!! Form::open(['method' => 'post', 'action' => 'UsersController@store']) !!}
+		{!! Form::model($user, ['method' => 'post', 'action' => ['UsersController@update', $user]]) !!}
 			<div class="form-group">
 				{!! Form::label('name', 'Name:') !!}
 				{!! Form::text('name', null, ['class' => 'form-control']) !!}
 			</div>
 
 			<div class="form-group">
-				{!! Form::label('email', 'Email:') !!}
-				{!! Form::email('email', null, ['class' => 'form-control']) !!}
-			</div>
-
-			<div class="form-group">
-				{!! Form::label('password', 'Password:') !!}
+				<!-- Seems like we should prompt for existing password here -->
+				{!! Form::label('password', 'New Password:') !!}
 				{!! Form::password('password', ['class' => 'form-control']) !!}
 			</div>
 
@@ -28,7 +24,7 @@
 			</div>
 
 			<div class="form-group">
-					{!! Form::submit('Create User', ['class' => 'btn btn-primary']) !!}
+					{!! Form::submit('Update User', ['class' => 'btn btn-primary']) !!}
 			</div>
 			
 			<div class="form-group">

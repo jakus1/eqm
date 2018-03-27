@@ -42,7 +42,7 @@ class MembersController extends Controller
 	/**
 	 * Display form to create a new member
 	 *
-	 * Redirects to home page after saving new member
+	 * Redirects to home page after saving (storing) new member
 	 */
 	public function create() 
 	{
@@ -69,7 +69,7 @@ class MembersController extends Controller
 
 		$member->first = request('first');
 		$member->last = request('last');
-		$member->email = request('first');
+		$member->email = request('email');
 		$member->sms_phone = request('sms_phone');
 
 		$member->save();
@@ -77,11 +77,38 @@ class MembersController extends Controller
 		// Redirect back to home page
 		return redirect()->home(); 
 	}
+
+	/**
+	 * Save changes to an existing member from a PUT request
+	 *
+	 * @param $member
+	 * @return redirect to home page
+	 */
+	public function update(Member $member) 
+	{
+		$this->validate(request(), [
+			'first' => 'required',
+			'last' => 'required',
+			'email' => 'required|email',
+			// FIXME: Need to check for something other than numeric here
+			'sms_phone' => "required|numeric"
+		]);
+
+		$member->first = request('first');
+		$member->last = request('last');
+		$member->email = request('email');
+		$member->sms_phone = request('sms_phone');
+
+		$member->save();
+
+		// Redirect back to home page
+		return redirect()->action('MembersController@show', $member); 
+	}
 	
 	/**
 	 * Display the specified member.
 	 *
-	 * @param  int  $member
+	 * @param $member
 	 * @return Response
 	 */
 	public function show(Member $member) 
@@ -92,11 +119,24 @@ class MembersController extends Controller
 	/**
 	 * Show the form for editing the specified member.
 	 *
-	 * @param  int  $member
+	 * @param  $member
 	 * @return Response
 	 */
 	public function edit(Member $member) 
 	{
 		return view('member.edit', compact('member'));
+	}
+
+	/**
+	 * delete the specified member.
+	 *
+	 * @param $member
+	 * @return Response
+	 */
+	public function delete(Member $member)
+	{
+		$member->delete();
+
+		return index();
 	}
 }
