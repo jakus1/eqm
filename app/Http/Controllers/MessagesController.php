@@ -10,12 +10,11 @@ use PDF;
 use Storage;
 use Session;
 
-use App\Http\Controllers\Controller;
 use \Illuminate\Support\Facades\Response;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Message;
 
-class MessagesController extends BaseController {
+class MessagesController extends Controller {
 
 	/**
 	 * Display a listing of messages

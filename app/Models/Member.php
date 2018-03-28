@@ -10,7 +10,6 @@ use Carbon\Carbon;
 class Member extends Model
 {
 	use TagTrait, Notifiable, SoftDeletes;
-	// protected $connection = 'mysql-live';
 
 	public static function boot() {
 		parent::boot();
@@ -65,13 +64,11 @@ class Member extends Model
 	/*##############################################################################################
 	Relationships
 	##############################################################################################*/
-	
-	public function messages()
+
+    public function messages()
 	{
-		return $this->hasMany(\App\Models\Messages::class);
+		return $this->hasMany(\App\Models\Message::class);
 	}
-
-
 
 	/*##############################################################################################
 	scopes
@@ -93,6 +90,17 @@ class Member extends Model
 				// ->orWhere('name', 'like', '%' . $q . '%')
 				;
 		});
+	}
+
+	/**
+	 * Scope to search for 'active' members
+	 * by Richard
+	 *
+	 * @param 
+	 * @return collection
+	 */
+	public function scopeActive($query) {
+		return $query->where('status', '=', 'active');
 	}
 
 	/**
@@ -162,5 +170,5 @@ class Member extends Model
     public function routeNotificationForNexmo()
     {
         return '1'.$this->sms_phone;
-    }
+	}
 }
