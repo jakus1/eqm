@@ -16,11 +16,11 @@
 		</div>
 
 		<div class="form-group">
-				{!! Form::submit('Sign in', ['class' => 'btn btn-primary']) !!}
+			{!! Form::submit('Sign in', ['class' => 'btn btn-primary']) !!}
 		</div>
 		
 		<div class="form-group">
-				@include ('layouts.errors')
+			@include ('layouts.errors')
 		</div>
 	{!! Form::close() !!}
 </div>

@@ -18,8 +18,8 @@
 			</div>		
 
 			<div class="form-group">
-					{!! Form::label('sms_phone', 'Phone for SMS Messages:') !!}
-					{!! Form::text('sms_phone', null, ['class' => 'form-control']) !!}
+				{!! Form::label('sms_phone', 'Phone for SMS Messages:') !!}
+				{!! Form::text('sms_phone', null, ['class' => 'form-control']) !!}
 			</div>
 
 			<div class="form-group">
@@ -28,11 +28,11 @@
 			</div>
 
 			<div class="form-group">
-					{!! Form::submit('Create Member', ['class' => 'btn btn-primary']) !!}
+				{!! Form::submit('Create Member', ['class' => 'btn btn-primary']) !!}
 			</div>
 
 			<div class="form-group">
-					@include ('layouts.errors')
+				@include ('layouts.errors')
 			</div>
 		{!! Form::close() !!}
 	</div>
