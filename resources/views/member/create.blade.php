@@ -1,10 +1,10 @@
 @extends ('layouts.master')
 
 @section('content')
-  <div class="col-sm-8 blog-main">
-    <h1>Create a member</h1>
+	<div class="col-sm-8 blog-main">
+		<h1>Create a member</h1>
 
-    <hr>
+		<hr>
 
 		{!! Form::open(['method' => 'post', 'action' => 'MembersController@store']) !!}
 			<div class="form-group">
@@ -35,5 +35,5 @@
 					@include ('layouts.errors')
 			</div>
 		{!! Form::close() !!}
-  </div>
+	</div>
 @endsection
