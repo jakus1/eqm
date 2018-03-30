@@ -87,7 +87,7 @@ class MessagesController extends Controller {
 		// 	$messageLines[] = "Sent an email message to: ".$member->first." ".$member->last.".";
 		// }
 
-		return view('message.show', $new_message);
+		return view('message.show', ['message' => $new_message]);
 	}
 
 	/**
