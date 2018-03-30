@@ -74,19 +74,6 @@ class MessagesController extends Controller {
 
 		$new_message = $member->addMessage(request('subject'),request('body'));
 
-		// FIXME
-		// do the sms part
-		// foreach($members as $member) {
-		// 	$member->notify(new SendSMS($data));
-		// 	$messageLines[] = "Sent an sms message to: ".$member->first." ".$member->last.".";
-		// }
-		
-		// do the email part
-		// foreach($members as $member) {
-		// 	$member->notify(new SendEmail($data,$subject));
-		// 	$messageLines[] = "Sent an email message to: ".$member->first." ".$member->last.".";
-		// }
-
 		return view('message.show', ['message' => $new_message]);
 	}
 
