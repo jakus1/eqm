@@ -17,6 +17,16 @@ use App\Models\Message;
 class MessagesController extends Controller {
 
 	/**
+	 * Constructor
+	 *
+	 */
+	public function __construct() 
+	{
+		// You must be signed in to see or create members
+		$this->middleware('auth');
+	}
+	
+	/**
 	 * Display a listing of messages
 	 *
 	 * @return Response

@@ -8,6 +8,24 @@
 		<li><strong>Phone: </strong>{{ $member->sms_phone }}</li>
 	</ul>
 	Edit <a href="{{ action('MembersController@edit', $member->id) }}">{{ $member->first }}</a>
+
 	<hr>
+
+	<div class="comments">
+		<ul>
+		@foreach ($member->messages as $message)
+			<li class="list-group-item">
+				<strong>
+					{{ $message->created_at->diffForHumans() }} &nbsp;
+				</strong>
+				<a href="/member/{{ $member->id }}">{{ $member->first}} {{$member->last}}</a>:
+				<br>
+				<h3> {{ $message->subject }}</h3>
+				<br>
+				{{ $message->body }}
+			</li>
+		@endforeach
+	</ul>
+	</div>
 </div>
 @endsection
