@@ -72,7 +72,7 @@ class MessagesController extends Controller {
 			'body' => 'required'
 		]);
 
-		$new_message = $member->addMessage(request('subject',request('body')));
+		$new_message = $member->addMessage(request('subject'),request('body'));
 
 		// FIXME
 		// do the sms part
