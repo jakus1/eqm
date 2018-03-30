@@ -20,7 +20,7 @@ Route::resource('user', 'UsersController'); // get:/user, get:/user/create, post
 
 Route::resource('member', 'MembersController'); // get:/member, get:/member/create, post:/member, get:/member/{member}, get:/member/{member}/edit, put:/member/{member}, delete:/member/{member}
 
-Route::get('/message/create', 'MessagesController@create');
+Route::resource('message', 'MessagesController');
 
 Route::get('/login', 'SessionsController@create')->name('login');
 Route::post('/login', 'SessionsController@store');
