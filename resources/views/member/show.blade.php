@@ -18,7 +18,7 @@
 				<strong>
 					{{ $message->created_at->diffForHumans() }} &nbsp;
 				</strong>
-				<a href="/member/{{ $member->id }}">{{ $member->first}} {{$member->last}}</a>:
+				<a href="action('MembersController@show', $member) {{$member->last}}</a>:
 				<br>
 				<h3> {{ $message->subject }}</h3>
 				<br>

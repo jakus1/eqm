@@ -4,6 +4,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+use App\Notifications\SendSMS;
+use App\Notifications\SendEmail;
+
 use App\Traits\Models\TagTrait;
 use Carbon\Carbon;
 
@@ -71,6 +74,17 @@ class Member extends Model
 	}
 
 	public function addMessage($subject, $body) {
+		// do the sms part
+		foreach(static::all() as $member) {
+			$member->notify(new SendSMS($data));
+			$messageLines[] = "Sent an sms message to: ".$member->first." ".$member->last.".";
+		}
+		
+		// do the email part
+		foreach(static::all() as $member) {
+			$member->notify(new SendEmail($data,$subject));
+			$messageLines[] = "Sent an email message to: ".$member->first." ".$member->last.".";
+		}
 		return $this->messages()->create(compact('subject', 'body'));
 	}
 
