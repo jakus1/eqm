@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use Validator;
+use Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use App\Http\Requests\RegistrationRequest;
 use App\Models\User;
 
 class UsersController extends Controller
@@ -79,40 +80,63 @@ class UsersController extends Controller
 	 */
 	public function update(User $user) 
 	{
-		$isModelChanged = false;
-
 		if (auth()->check()) {
-			// Check to see if they changed the name
-			if (request('name') != '') {
-				$user->name = request('name');
-				$isModelChanged = true;
-			}
-			
-			// Check to see if they changed the password
-			if (request('password') != '' && request('newPassword') != '' &&
-			    request('newPassword_confirmation') != '' ) {
-				$this->validate(request(), [
-					'password' => 'required_with:new_password|password',
-					'new_password' => 'confirmed'
-				]);	
+			$isModelModified = false;
 
-			if (Hash::check($request->password, $user->password)) { 
-				$user->fill([
-					'password' => Hash::make($request->newPassword)
-					]);
-					$isModelChanged = true;
+			if (request('name') != '') {
+				$validator = Validator::make(request()->all(), [
+					'name' => 'required',
+				]);
+
+				if ($validator->fails()) {
+					return back()->withErrors($validator)->withInput();
 				} else {
-					// ??? Throw an error?
+					$user->fill([
+						'name' => request('name')
+					]);
+					$isModelModified = true;	
+				}
+			} 
+			
+			$isPasswordModified = false;
+			// Any valid password change request must include the old password 
+			if (request('password') != '') {
+				$validator = Validator::make(request()->all(), [
+					'password' => 'required_with:newPassword',
+					'newPassword' => 'required|confirmed',
+				]);
+				if ($validator->fails()) {
+					return back()->withErrors($validator)->withInput();
+				} else {
+					// Probably should send a notification email as well
+					$user->fill([
+						'password' => Hash::make(request('newPassword'))
+						]);
+					$isModelModified = true;
+					$isPasswordModified = true;
 				}
 			}
 
-			if ($isModelChanged) {
-				$user->save();
+			// If this conditional succeeds, it implies the user entered something
+			// into the new password fields without entering anything in the old
+			// password field, and this by definition is an error.
+			if ($isPasswordModified == false && 
+			    (request('newPassword') != '' || request('newPassword_confirmation') != '')) {
+				$validator = Validator::make(request()->all(), [
+					'password' => 'required_with:newPassword',
+					'newPassword' => 'required|confirmed',
+				]);
+				$validator->errors()->add('password', 'Must enter a valid new password');
+				return back()->withErrors($validator)->withInput();
 			}
-			// Redirect back to show page
-			return redirect()->action('UsersController@show', $user);	 
-		} else {
-			return redirect()->home();
+
+			if ($isModelModified) {
+				$user->save();
+				return redirect()->action('UsersController@show', $user); 
+			}
+
+			// FIXME: What happens if the user wants to cancel???
+			return redirect()->action('UsersController@show', $user); 
 		}
 	}
 
