@@ -7,10 +7,6 @@
     "repositories": [
         {
             "type": "git",
-            "url": "git@bitbucket.org:cubicle7/laravel-scaffold.git"
-        },
-        {
-            "type": "git",
             "url": "git@github.com:laravel-notification-channels/twilio.git"
         }
     ],
@@ -32,7 +28,6 @@
         "nunomaduro/collision": "~1.1",
         "phpunit/phpunit": "~7.0",
         "symfony/thanks": "~1.0",
-        "cubicle7/laravel-scaffold": "dev-master",
         "fzaninotto/faker": "~1.6",
         "jeroen-g/laravel-packager": "^1.5",
         "laracasts/generators": "dev-master"

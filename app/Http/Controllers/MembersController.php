@@ -15,51 +15,127 @@ use \Illuminate\Support\Facades\Response;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Member;
 
-class MembersController extends BaseController {
+class MembersController extends Controller 
+{
 
 	/**
-	 * Display a listing of members
+	 * Constructor
 	 *
-	 * @return Response
 	 */
-	public function index()
+	public function __construct() 
 	{
-		// $members = Member::all();
-		return view('member.index');
+		// You must be signed in to see or create members
+		$this->middleware('auth');
 	}
 
 	/**
-	 * Show the form for creating a new member
+	 * Display a listing of members. 
 	 *
 	 * @return Response
 	 */
-	public function create()
+	public function index() 
+	{
+		$members = Member::all();
+		return view('member.index', compact('members'));
+	}
+
+	/**
+	 * Display form to create a new member
+	 *
+	 * Redirects to home page after saving (storing) new member
+	 */
+	public function create() 
 	{
 		return view('member.create');
 	}
 
 	/**
+	 * Store a new member from a POST request
+	 *
+	 * @return redirect to home page
+	 */
+	public function store() 
+	{
+		$this->validate(request(), [
+			'first' => 'required',
+			'last' => 'required',
+			'email' => 'required|email',
+			// FIXME: Need to check for something other than numeric here
+			'sms_phone' => "required|numeric"
+		]);
+		
+		$member = new Member();
+
+		$member->first = request('first');
+		$member->last = request('last');
+		$member->email = request('email');
+		$member->sms_phone = request('sms_phone');
+
+		$member->save();
+
+		// Redirect back to home page
+		return redirect()->home(); 
+	}
+
+	/**
+	 * Save changes to an existing member from a PUT request
+	 *
+	 * @param $member
+	 * @return redirect to home page
+	 */
+	public function update(Member $member) 
+	{
+		$this->validate(request(), [
+			'first' => 'required',
+			'last' => 'required',
+			'email' => 'required|email',
+			// FIXME: Need to check for something other than numeric here
+			'sms_phone' => "required|numeric"
+		]);
+
+		$member->first = request('first');
+		$member->last = request('last');
+		$member->email = request('email');
+		$member->sms_phone = request('sms_phone');
+
+		$member->save();
+
+		// Redirect back to home page
+		return redirect()->action('MembersController@show', $member); 
+	}
+	
+	/**
 	 * Display the specified member.
 	 *
-	 * @param  int  $id
+	 * @param $member
 	 * @return Response
 	 */
-	public function show($id)
+	public function show(Member $member) 
 	{
-		$the_record = $member = Member::findOrFail($id);
-		return view('member.show', compact('member','the_record'));
+		return view('member.show', compact('member'));
 	}
 
 	/**
 	 * Show the form for editing the specified member.
 	 *
-	 * @param  int  $id
+	 * @param  $member
 	 * @return Response
 	 */
-	public function edit($id)
+	public function edit(Member $member) 
 	{
-		$member = Member::find($id);
 		return view('member.edit', compact('member'));
 	}
 
+	/**
+	 * delete the specified member.
+	 *
+	 * @param $member
+	 * @return Response
+	 */
+	public function delete(Member $member)
+	{
+		$member->delete();
+
+		return index();
+	}
 }
