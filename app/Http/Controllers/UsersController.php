@@ -41,9 +41,31 @@ class UsersController extends Controller
 	 *
 	 * @return home page if successful, otherwise errors will be displayed
 	 */
-	public function store(RegistrationRequest $request) 
+	public function store() 
 	{
-		$request->persist();
+		$this->validate(request(), [
+			'name' => 'required',
+			'email' => 'required|unique:users,email',
+			/*
+				Note the "confirmed" validation requires an associated
+				_confirmation input form
+			*/
+			'password' => 'required|confirmed'
+		]);
+
+		$name = request('name');
+		$email = request('email');
+		$password = Hash::make(request('password'));
+
+		// Create and save the user
+		try{
+			$user = User::create(compact('name', 'email', 'password'));
+		} catch(\Exception $exception){
+			Log::error('Database error! '.$exception->getCode());
+		}
+
+		// Sign the user in
+		auth()->login($user);
 		
 		// Redirect back to home page
 		return redirect()->home();
@@ -57,17 +79,36 @@ class UsersController extends Controller
 	 */
 	public function update(User $user) 
 	{
+		$isModelChanged = false;
+
 		if (auth()->check()) {
-			$this->validate(request(), [
-				'name' => 'required',
-				'password' => 'required|confirmed'
-			]);
-	
-			$user->name = request('name');
-			$user->password = Hash::make(request('password'));
-	
-			$user->save();
-	
+			// Check to see if they changed the name
+			if (request('name') != '') {
+				$user->name = request('name');
+				$isModelChanged = true;
+			}
+			
+			// Check to see if they changed the password
+			if (request('password') != '' && request('newPassword') != '' &&
+			    request('newPassword_confirmation') != '' ) {
+				$this->validate(request(), [
+					'password' => 'required_with:new_password|password',
+					'new_password' => 'confirmed'
+				]);	
+
+			if (Hash::check($request->password, $user->password)) { 
+				$user->fill([
+					'password' => Hash::make($request->newPassword)
+					]);
+					$isModelChanged = true;
+				} else {
+					// ??? Throw an error?
+				}
+			}
+
+			if ($isModelChanged) {
+				$user->save();
+			}
 			// Redirect back to show page
 			return redirect()->action('UsersController@show', $user);	 
 		} else {
