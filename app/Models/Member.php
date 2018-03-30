@@ -70,6 +70,10 @@ class Member extends Model
 		return $this->hasMany(\App\Models\Message::class);
 	}
 
+	public function addMessage($subject, $body) {
+		return $this->messages()->create(compact('subject', 'body'));
+	}
+
 	/*##############################################################################################
 	scopes
 	##############################################################################################*/

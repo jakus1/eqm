@@ -13,6 +13,7 @@ use Session;
 use \Illuminate\Support\Facades\Response;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Message;
+use App\Models\Member;
 
 class MessagesController extends Controller {
 
@@ -25,7 +26,7 @@ class MessagesController extends Controller {
 		// You must be signed in to see or create members
 		$this->middleware('auth');
 	}
-	
+
 	/**
 	 * Display a listing of messages
 	 *
@@ -33,7 +34,7 @@ class MessagesController extends Controller {
 	 */
 	public function index()
 	{
-		// $messages = Message::all();
+		$messages = Message::all();
 		return view('message.index');
 	}
 
@@ -50,24 +51,39 @@ class MessagesController extends Controller {
 	/**
 	 * Display the specified message.
 	 *
-	 * @param  int  $id
+	 * @param Message $message
 	 * @return Response
 	 */
-	public function show($id)
+	public function show(Message $message)
 	{
-		$the_record = $message = Message::findOrFail($id);
-		return view('message.show', compact('message','the_record'));
+		return view('message.show', compact('message'));
+	}
+
+	/**
+	 * Store a new message.
+	 *
+	 * @param Member $member
+	 * @return Response
+	 */
+	public function store(Member $member)
+	{
+		$this->validate(request(), [
+			'subject' => 'required',
+			'body' => 'required'
+		]);
+
+		$new_message = $member->addMessage(request('subject',request('body')));
+		return view('message.show', $new_message);
 	}
 
 	/**
 	 * Show the form for editing the specified message.
 	 *
-	 * @param  int  $id
+	 * @param Message $message
 	 * @return Response
 	 */
-	public function edit($id)
+	public function edit(Message $message)
 	{
-		$message = Message::find($id);
 		return view('message.edit', compact('message'));
 	}
 
