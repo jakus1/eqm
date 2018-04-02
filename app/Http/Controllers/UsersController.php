@@ -97,7 +97,7 @@ class UsersController extends Controller
 		if (auth()->check()) {
 			$data = request()->all();
 
-			$validator = Validator::make(request()->all(), [
+			$validator = Validator::make($data, [
 				'name' => 'sometimes',
 				'password' => 'required_with:newPassword',
 				'newPassword' => 'required_with:password|confirmed|min:8',
