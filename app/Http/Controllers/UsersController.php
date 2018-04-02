@@ -102,6 +102,12 @@ class UsersController extends Controller
 				'password' => 'required_with:newPassword',
 				'newPassword' => 'required_with:password|confirmed|min:8',
 			]);
+
+			$validator->after(function ($validator) use ($data, $user) {
+				if (!Hash::check($data['password'], $user->password)) {
+					$validator->errors()->add('password', 'Invalid existing password entered');
+				}
+			});
 	
 			if ($validator->fails()) {
 				return back()->withErrors($validator)->withInput();
