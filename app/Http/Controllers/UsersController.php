@@ -11,6 +11,18 @@ use App\Models\User;
 class UsersController extends Controller
 {
 	/**
+	 * Constructor
+	 *
+	 */
+	/*
+	public function __construct() 
+	{
+		// You must be signed in to see or create members
+		$this->middleware('auth', ['except' => 'index', 'create', 'store']);
+	}
+	*/
+
+	/**
 	 * Primary access point, home
 	 *
 	 * @return members view if logged in, otherwise login
@@ -24,56 +36,58 @@ class UsersController extends Controller
 		}
 	}
 	/**
-	 * Display the user creation page. This is available to everyone
+	 * Display the user creation page. Only guests can use this page.
 	 *
 	 * @return user creation page
 	 */
 	public function create() 
 	{
-		if (auth()->check()) {
-			return redirect()->home();
+		if (!auth()->check()) {
+			return view('user.create'); 
 		} else {
-			return view('user.create');
+			return redirect()->home();
 		}
 	}
 
 	/**
-	 * Store a new user
+	 * Store a new user. Only guests can use this page.
 	 *
 	 * @return home page if successful, otherwise errors will be displayed
 	 */
 	public function store() 
 	{
-		$this->validate(request(), [
-			'name' => 'required',
-			'email' => 'required|unique:users,email',
-			/*
-				Note the "confirmed" validation requires an associated
-				_confirmation input form
-			*/
-			'password' => 'required|confirmed'
-		]);
+		if (!auth()->check()) {
 
-		$name = request('name');
-		$email = request('email');
-		$password = Hash::make(request('password'));
+			$this->validate(request(), [
+				'name' => 'required',
+				'email' => 'required|unique:users,email',
+				/*
+					Note the "confirmed" validation requires an associated
+					_confirmation input form
+				*/
+				'password' => 'required|confirmed|min:8'
+			]);
 
-		// Create and save the user
-		try{
-			$user = User::create(compact('name', 'email', 'password'));
-		} catch(\Exception $exception){
-			Log::error('Database error! '.$exception->getCode());
-		}
+			$name = request('name');
+			$email = request('email');
+			$password = Hash::make(request('password'));
 
-		// Sign the user in
-		auth()->login($user);
-		
-		// Redirect back to home page
+			// Create and save the user
+			try{
+				$user = User::create(compact('name', 'email', 'password'));
+			} catch(\Exception $exception){
+				Log::error('Database error! '.$exception->getCode());
+			}
+
+			// Sign the user in
+			auth()->login($user);
+		} 
 		return redirect()->home();
 	}
 
 		/**
-	 * Save changes to an existing member from a PUT request
+	 * Save changes to an existing member from a PUT .
+	 * Only logged in users can use this page.
 	 *
 	 * @param $member
 	 * @return redirect to show or home page
@@ -81,62 +95,32 @@ class UsersController extends Controller
 	public function update(User $user) 
 	{
 		if (auth()->check()) {
-			$isModelModified = false;
+			$data = request()->all();
 
-			if (request('name') != '') {
-				$validator = Validator::make(request()->all(), [
-					'name' => 'required',
-				]);
+			$validator = Validator::make(request()->all(), [
+				'name' => 'sometimes',
+				'password' => 'required_with:newPassword',
+				'newPassword' => 'required_with:password|confirmed|min:8',
+			]);
 
-				if ($validator->fails()) {
-					return back()->withErrors($validator)->withInput();
-				} else {
-					$user->fill([
-						'name' => request('name')
-					]);
-					$isModelModified = true;	
+			$validator->after(function ($validator) {
+				if ((request('password') == '') && (request('newPassword') != '' || request('newPassword_confirmation') != '')) {
+					$validator->errors()->add('password', 'Existing password required to change password.');
+				} else if ((request('password') != '') && (request('newPassword') == '' || request('newPassword_confirmation') == '')) {
+					$validator->errors()->add('password', 'New password must be 8 characters.');
 				}
-			} 
-			
-			$isPasswordModified = false;
-			// Any valid password change request must include the old password 
-			if (request('password') != '') {
-				$validator = Validator::make(request()->all(), [
-					'password' => 'required_with:newPassword',
-					'newPassword' => 'required|confirmed',
-				]);
-				if ($validator->fails()) {
-					return back()->withErrors($validator)->withInput();
-				} else {
-					// Probably should send a notification email as well
-					$user->fill([
-						'password' => Hash::make(request('newPassword'))
-						]);
-					$isModelModified = true;
-					$isPasswordModified = true;
-				}
-			}
-
-			// If this conditional succeeds, it implies the user entered something
-			// into the new password fields without entering anything in the old
-			// password field, and this by definition is an error.
-			if ($isPasswordModified == false && 
-			    (request('newPassword') != '' || request('newPassword_confirmation') != '')) {
-				$validator = Validator::make(request()->all(), [
-					'password' => 'required_with:newPassword',
-					'newPassword' => 'required|confirmed',
-				]);
-				$validator->errors()->add('password', 'Must enter a valid new password');
+			});
+	
+			if ($validator->fails()) {
 				return back()->withErrors($validator)->withInput();
+			} else {
+				$data['password'] = Hash::make(request('newPassword'));
+	
+				$user->update($data);
+				return redirect()->action('UsersController@show', $user); 	
 			}
-
-			if ($isModelModified) {
-				$user->save();
-				return redirect()->action('UsersController@show', $user); 
-			}
-
-			// FIXME: What happens if the user wants to cancel???
-			return redirect()->action('UsersController@show', $user); 
+		} else {
+			redirect()->home();
 		}
 	}
 
@@ -162,7 +146,11 @@ class UsersController extends Controller
 	 */
 	public function edit(User $user) 
 	{
-		return view('user.edit', compact('user'));
+		if (auth()->check()) {
+			return view('user.edit', compact('user'));
+		} else {
+			return redirect()->home();
+		}
 	}
 }
 

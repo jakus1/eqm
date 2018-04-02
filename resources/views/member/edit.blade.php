@@ -28,7 +28,8 @@
 			</div>
 
 			<div class="form-group">
-				{!! Form::submit('Update Member', ['class' => 'btn btn-primary']) !!}
+				{!! Form::submit('Update Member', ['class' => 'btn btn-primary', 'style' => 'margin: 0 6px']) !!}
+				<a href="{{ action('MembersController@show', $member) }}" class="btn btn-primary pull-right">Cancel</a>
 			</div>
 
 			<div class="form-group">
