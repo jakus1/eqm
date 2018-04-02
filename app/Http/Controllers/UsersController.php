@@ -102,14 +102,6 @@ class UsersController extends Controller
 				'password' => 'required_with:newPassword',
 				'newPassword' => 'required_with:password|confirmed|min:8',
 			]);
-
-			$validator->after(function ($validator) {
-				if ((request('password') == '') && (request('newPassword') != '' || request('newPassword_confirmation') != '')) {
-					$validator->errors()->add('password', 'Existing password required to change password.');
-				} else if ((request('password') != '') && (request('newPassword') == '' || request('newPassword_confirmation') == '')) {
-					$validator->errors()->add('password', 'New password must be 8 characters.');
-				}
-			});
 	
 			if ($validator->fails()) {
 				return back()->withErrors($validator)->withInput();
