@@ -185,3 +185,7 @@ h6,
   z-index: 10;
 }
 
+.add-button-spacing {
+  margin: 0 6px;
+}
+

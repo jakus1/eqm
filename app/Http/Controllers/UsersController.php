@@ -2,76 +2,106 @@
 
 namespace App\Http\Controllers;
 
+use Validator;
+use Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use App\Http\Requests\RegistrationRequest;
 use App\Models\User;
 
 class UsersController extends Controller
 {
 	/**
-	 * Primary access point, home
+	 * Constructor
+	 *
+	 */
+	public function __construct() 
+	{
+		// You must be signed in to see or create members
+		$this->middleware('auth')->except(['create', 'store']);
+	}
+
+	/**
+	 * Index page for users
 	 *
 	 * @return members view if logged in, otherwise login
 	 */
 	public function index() 
 	{
-		if (auth()->check()) {
-			return redirect()->action('MembersController@index');
-		} else {
-			return redirect()->route('login');
-		}
+		return redirect()->action('MembersController@index');
 	}
 	/**
-	 * Display the user creation page. This is available to everyone
+	 * Display the user creation page. 
 	 *
 	 * @return user creation page
 	 */
 	public function create() 
 	{
-		if (auth()->check()) {
-			return redirect()->home();
-		} else {
-			return view('user.create');
-		}
+		return view('user.create'); 
 	}
 
 	/**
-	 * Store a new user
-	 *
+	 * Store a new user. 
+	 * 
 	 * @return home page if successful, otherwise errors will be displayed
 	 */
-	public function store(RegistrationRequest $request) 
+	public function store() 
 	{
-		$request->persist();
-		
-		// Redirect back to home page
-		return redirect()->home();
+		$this->validate(request(), [
+			'name' => 'required',
+			'email' => 'required|unique:users,email',
+			/*
+				Note the "confirmed" validation requires an associated
+				_confirmation input form
+			*/
+			'password' => 'required|confirmed|min:8'
+		]);
+
+		$name = request('name');
+		$email = request('email');
+		$password = Hash::make(request('password'));
+
+		// Create and save the user
+		try{
+			$user = User::create(compact('name', 'email', 'password'));
+		} catch(\Exception $exception){
+			Log::error('Database error! '.$exception->getCode());
+		}
+
+		// Sign the user in
+		auth()->login($user); 
+		return redirect()->action('MembersController@index');
 	}
 
 		/**
-	 * Save changes to an existing member from a PUT request
+	 * Save changes to an existing member from a PUT .
+	 * Only logged in users can use this page.
 	 *
 	 * @param $member
 	 * @return redirect to show or home page
 	 */
 	public function update(User $user) 
 	{
-		if (auth()->check()) {
-			$this->validate(request(), [
-				'name' => 'required',
-				'password' => 'required|confirmed'
-			]);
-	
-			$user->name = request('name');
-			$user->password = Hash::make(request('password'));
-	
-			$user->save();
-	
-			// Redirect back to show page
-			return redirect()->action('UsersController@show', $user);	 
+		$data = request()->all();
+
+		$validator = Validator::make($data, [
+			'name' => 'sometimes',
+			'password' => 'required_with:newPassword',
+			'newPassword' => 'required_with:password|confirmed|min:8',
+		]);
+
+		$validator->after(function ($validator) use ($data, $user) {
+			if (!Hash::check($data['password'], $user->password)) {
+				$validator->errors()->add('password', 'Invalid existing password entered');
+			}
+		});
+
+		if ($validator->fails()) {
+			return back()->withErrors($validator)->withInput();
 		} else {
-			return redirect()->home();
+			$data['password'] = Hash::make(request('newPassword'));
+
+			$user->update($data);
+			return redirect()->action('UsersController@show', $user); 	
 		}
 	}
 
@@ -82,11 +112,7 @@ class UsersController extends Controller
 	 */
 	public function show(User $user) 
 	{
-		if (auth()->check()) {
-			return view('user.show', compact('user'));
-		} else {
-			return redirect()->home();
-		}  
+		return view('user.show', compact('user'));
 	}
 
 	/**

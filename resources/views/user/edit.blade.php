@@ -13,18 +13,23 @@
 				</div>
 
 				<div class="form-group">
-					<!-- Seems like we should prompt for existing password here -->
-					{!! Form::label('password', 'New Password:') !!}
+					{!! Form::label('password', 'Existing Password:') !!}
 					{!! Form::password('password', ['class' => 'form-control']) !!}
 				</div>
 
 				<div class="form-group">
-					{!! Form::label('password_confirmation', 'Password Confirmation:') !!}
-					{!! Form::password('password_confirmation', ['class' => 'form-control']) !!}
+					{!! Form::label('newPassword', 'New Password:') !!}
+					{!! Form::password('newPassword', ['class' => 'form-control']) !!}
 				</div>
 
 				<div class="form-group">
-					{!! Form::submit('Update User', ['class' => 'btn btn-primary']) !!}
+					{!! Form::label('newPassword_confirmation', 'Password Confirmation:') !!}
+					{!! Form::password('newPassword_confirmation', ['class' => 'form-control']) !!}
+				</div>
+
+				<div class="form-group">
+					{!! Form::submit('Update User', ['class' => 'btn btn-primary pull-right', 'style' => 'margin: 0 6px']) !!}
+					<a href="{{ action('UsersController@show', $user) }}" class="btn btn-primary pull-right">Cancel</a>
 				</div>
 				
 				<div class="form-group">
