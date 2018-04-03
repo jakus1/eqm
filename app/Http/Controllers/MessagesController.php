@@ -14,6 +14,8 @@ use \Illuminate\Support\Facades\Response;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Message;
 use App\Models\Member;
+use App\Notifications\SendSMS;
+use App\Notifications\SendEmail;
 
 class MessagesController extends Controller {
 
@@ -34,7 +36,6 @@ class MessagesController extends Controller {
 	 */
 	public function index()
 	{
-		$messages = Message::all();
 		return view('message.index');
 	}
 
@@ -62,19 +63,55 @@ class MessagesController extends Controller {
 	/**
 	 * Store a new message.
 	 *
-	 * @param Member $member
 	 * @return Response
 	 */
-	public function store(Member $member)
+	public function store()
 	{
-		$this->validate(request(), [
-			'subject' => 'required',
+		$data = request()->all();
+
+		$this->validate($data, [
+			'tags' => 'sometimes',
+			'subject' => 'sometimes',
 			'body' => 'required'
 		]);
+		
+		$members = Member::all();
+		$messageTags = $data['tags'];
+
+		$communicationId = request('communication_id');
+
+		foreach ($members as $member) {
+			foreach ($member->tags() as $memberTag) {
+				foreach($messageTags as $messageTag) {
+					if ($messageTag == $memberTag) {
+						$messageLines[] = $this->sendMessage($member, $communicationId);
+					}
+				}
+			}
+		}
+		
+		return view('message.show', ['message' => $new_message]);
+	}
+
+	protected function sendMessage($member, $communicationId, $subject, $body) {
+		switch($communicationId) {
+			case 'SMS':
+				$member->notify(new SendSMS($data));
+				$messageLines[] = "Sent an sms message to: ".$member->first." ".$member->last.".";
+				break;
+			case 'Email':
+				$member->notify(new SendEmail($data,$subject));
+				$messageLines[] = "Sent an email message to: ".$member->first." ".$member->last.".";
+				break;
+			case Both:
+				$member->notify(new SendSMS($data));
+				$messageLines[] = "Sent an sms message to: ".$member->first." ".$member->last.".";
+				$member->notify(new SendEmail($data,$subject));
+				$messageLines[] = "Sent an email message to: ".$member->first." ".$member->last.".";
+				break;
+		}
 
 		$new_message = $member->addMessage(request('subject'),request('body'));
-
-		return view('message.show', ['message' => $new_message]);
 	}
 
 	/**
