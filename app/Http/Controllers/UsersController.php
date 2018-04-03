@@ -14,75 +14,63 @@ class UsersController extends Controller
 	 * Constructor
 	 *
 	 */
-	/*
 	public function __construct() 
 	{
 		// You must be signed in to see or create members
-		$this->middleware('auth', ['except' => 'index', 'create', 'store']);
+		$this->middleware('auth', ['except' => 'create', 'store']);
 	}
-	*/
 
 	/**
-	 * Primary access point, home
+	 * Index page for users
 	 *
 	 * @return members view if logged in, otherwise login
 	 */
 	public function index() 
 	{
-		if (auth()->check()) {
-			return redirect()->action('MembersController@index');
-		} else {
-			return redirect()->route('login');
-		}
+		return redirect()->action('MembersController@index');
 	}
 	/**
-	 * Display the user creation page. Only guests can use this page.
+	 * Display the user creation page. 
 	 *
 	 * @return user creation page
 	 */
 	public function create() 
 	{
-		if (!auth()->check()) {
-			return view('user.create'); 
-		} else {
-			return redirect()->home();
-		}
+		return view('user.create'); 
 	}
 
 	/**
-	 * Store a new user. Only guests can use this page.
-	 *
+	 * Store a new user. 
+	 * 
 	 * @return home page if successful, otherwise errors will be displayed
 	 */
 	public function store() 
 	{
-		if (!auth()->check()) {
+		dd(request()-all());
+		$this->validate(request(), [
+			'name' => 'required',
+			'email' => 'required|unique:users,email',
+			/*
+				Note the "confirmed" validation requires an associated
+				_confirmation input form
+			*/
+			'password' => 'required|confirmed|min:8'
+		]);
 
-			$this->validate(request(), [
-				'name' => 'required',
-				'email' => 'required|unique:users,email',
-				/*
-					Note the "confirmed" validation requires an associated
-					_confirmation input form
-				*/
-				'password' => 'required|confirmed|min:8'
-			]);
+		$name = request('name');
+		$email = request('email');
+		$password = Hash::make(request('password'));
 
-			$name = request('name');
-			$email = request('email');
-			$password = Hash::make(request('password'));
+		// Create and save the user
+		try{
+			$user = User::create(compact('name', 'email', 'password'));
+		} catch(\Exception $exception){
+			Log::error('Database error! '.$exception->getCode());
+		}
 
-			// Create and save the user
-			try{
-				$user = User::create(compact('name', 'email', 'password'));
-			} catch(\Exception $exception){
-				Log::error('Database error! '.$exception->getCode());
-			}
-
-			// Sign the user in
-			auth()->login($user);
-		} 
-		return redirect()->home();
+		// Sign the user in
+		auth()->login($user); 
+		return redirect()->action('MembersController@index');
 	}
 
 		/**
@@ -94,31 +82,27 @@ class UsersController extends Controller
 	 */
 	public function update(User $user) 
 	{
-		if (auth()->check()) {
-			$data = request()->all();
+		$data = request()->all();
 
-			$validator = Validator::make($data, [
-				'name' => 'sometimes',
-				'password' => 'required_with:newPassword',
-				'newPassword' => 'required_with:password|confirmed|min:8',
-			]);
+		$validator = Validator::make($data, [
+			'name' => 'sometimes',
+			'password' => 'required_with:newPassword',
+			'newPassword' => 'required_with:password|confirmed|min:8',
+		]);
 
-			$validator->after(function ($validator) use ($data, $user) {
-				if (!Hash::check($data['password'], $user->password)) {
-					$validator->errors()->add('password', 'Invalid existing password entered');
-				}
-			});
-	
-			if ($validator->fails()) {
-				return back()->withErrors($validator)->withInput();
-			} else {
-				$data['password'] = Hash::make(request('newPassword'));
-	
-				$user->update($data);
-				return redirect()->action('UsersController@show', $user); 	
+		$validator->after(function ($validator) use ($data, $user) {
+			if (!Hash::check($data['password'], $user->password)) {
+				$validator->errors()->add('password', 'Invalid existing password entered');
 			}
+		});
+
+		if ($validator->fails()) {
+			return back()->withErrors($validator)->withInput();
 		} else {
-			redirect()->home();
+			$data['password'] = Hash::make(request('newPassword'));
+
+			$user->update($data);
+			return redirect()->action('UsersController@show', $user); 	
 		}
 	}
 
@@ -129,11 +113,7 @@ class UsersController extends Controller
 	 */
 	public function show(User $user) 
 	{
-		if (auth()->check()) {
-			return view('user.show', compact('user'));
-		} else {
-			return redirect()->home();
-		}  
+		return view('user.show', compact('user'));
 	}
 
 	/**
@@ -144,11 +124,7 @@ class UsersController extends Controller
 	 */
 	public function edit(User $user) 
 	{
-		if (auth()->check()) {
-			return view('user.edit', compact('user'));
-		} else {
-			return redirect()->home();
-		}
+		return view('user.edit', compact('user'));
 	}
 }
 

@@ -12,7 +12,10 @@
 */
 
 /* Register a default route */
-Route::get('/', 'UsersController@index')->name('home');
+Route::get('/', function() {
+	return view('public.index');
+  })->name('home');
+
 Route::resource('user', 'UsersController'); // get:/user, get:/user/create, post:/user, get:/user/{user}, get:/user/{user}/edit, put:/user/{user}, delete:/user/{user}
 
 Route::resource('member', 'MembersController'); // get:/member, get:/member/create, post:/member, get:/member/{member}, get:/member/{member}/edit, put:/member/{member}, delete:/member/{member}
