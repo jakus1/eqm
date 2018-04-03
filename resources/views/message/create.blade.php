@@ -6,7 +6,8 @@
 
 		<hr>
 
-		{!! Form::open(['method' => 'post', 'action' => 'MessagesController@store']) !!}
+		{!! Form::open(['action' => 'MessagesController@store']) !!}
+			<!-- POST method implied -->
 			<div class="form-group">
 				{!! Form::label('tags', 'Tags:') !!}
 				{!! Form::text('tags', null, ['class' => 'form-control']) !!}
@@ -14,7 +15,7 @@
 
 			<div class="form-group">
 				{!! Form::label('communication_type', 'Communication Type:') !!}
-				{!! Form::select('communication_type', ['S' => 'SMS', 'E' => 'Email', 'B' => 'Both'], 'S', ['class' => 'form-control']) !!}
+				{!! Form::select('communication_type', ['SMS' => 'SMS', 'Email' => 'Email', 'Both' => 'Both'], 'S', ['class' => 'form-control']) !!}
 			</div>	
 			
 			<div class="form-group">
@@ -28,7 +29,8 @@
 			</div>
 
 			<div class="form-group">
-				{!! Form::submit('Submit Message', ['class' => 'btn btn-primary']) !!}
+				{!! Form::submit('Submit Message', ['class' => 'btn btn-primary pull-right', 'style' => 'margin: 0 6px']) !!}
+				<a href="{{ action('MembersController@index') }}" class="btn btn-primary pull-right">Cancel</a>
 			</div>
 
 			<div class="form-group">

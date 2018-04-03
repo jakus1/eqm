@@ -73,18 +73,8 @@ class Member extends Model
 		return $this->hasMany(\App\Models\Message::class);
 	}
 
-	public function addMessage($subject, $body) {
-		// do the sms part
-		foreach(static::all() as $member) {
-			$member->notify(new SendSMS($data));
-			$messageLines[] = "Sent an sms message to: ".$member->first." ".$member->last.".";
-		}
-		
-		// do the email part
-		foreach(static::all() as $member) {
-			$member->notify(new SendEmail($data,$subject));
-			$messageLines[] = "Sent an email message to: ".$member->first." ".$member->last.".";
-		}
+	public function addMessage($subject, $body, $communication_id) 
+	{
 		return $this->messages()->create(compact('subject', 'body'));
 	}
 
