@@ -17,7 +17,7 @@ class UsersController extends Controller
 	public function __construct() 
 	{
 		// You must be signed in to see or create members
-		$this->middleware('auth', ['except' => 'create', 'store']);
+		$this->middleware('auth')->except(['create', 'store']);
 	}
 
 	/**
@@ -46,7 +46,6 @@ class UsersController extends Controller
 	 */
 	public function store() 
 	{
-		dd(request()-all());
 		$this->validate(request(), [
 			'name' => 'required',
 			'email' => 'required|unique:users,email',
