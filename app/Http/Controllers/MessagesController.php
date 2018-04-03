@@ -71,7 +71,7 @@ class MessagesController extends Controller {
 		$data = request()->all();
 
 		$this->validate(request(), [
-			/*'tags' => 'required',*/
+			'tags' => 'required',
 			'subject' => 'sometimes',
 			'body' => 'required'
 		]);
@@ -92,7 +92,6 @@ class MessagesController extends Controller {
 			$member = $tag->taggable;
 			$messageLines[] = $this->sendMessage($member, $communicationId, $data['subject'], $data['body']);
 		}
-		
 		return view('message.sent', ['messageLines' => $messageLines]);
 	}
 
