@@ -14,6 +14,7 @@ use \Illuminate\Support\Facades\Response;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Message;
 use App\Models\Member;
+use App\Models\Tag;
 use App\Notifications\SendSMS;
 use App\Notifications\SendEmail;
 
@@ -78,22 +79,27 @@ class MessagesController extends Controller {
 		$members = Member::all();
 		$messageTags = $data['tags'];
 
+		$queriedTags = explode(" ",$data['tags']);
+
 		$communicationId = request('communication_id');
 
-		foreach ($members as $member) {
-			foreach ($member->tags() as $memberTag) {
-				foreach($messageTags as $messageTag) {
-					if ($messageTag == $memberTag) {
-						$messageLines[] = $this->sendMessage($member, $communicationId);
-					}
-				}
+		$tags = Tag::with('taggable')->whereIn('tag',$queriedTags)->get();
+		foreach($tags as $tag) {
+			if (!$tag->taggable instanceof Member) {
+				continue;
 			}
+			$member = $tag->taggable;
+			$messageLines[] = $this->sendMessage($member, $communicationId, $data['subject'], $data['body']);
 		}
 		
-		return view('message.show', ['message' => $new_message]);
+		return view('message.sent', ['messages' => $messageLines]);
 	}
 
 	protected function sendMessage($member, $communicationId, $subject, $body) {
+		$data = [
+			'stripped-text' => $body,
+			'sender' => auth()->user()->email
+		];
 		switch($communicationId) {
 			case 'SMS':
 				$member->notify(new SendSMS($data));
@@ -103,7 +109,7 @@ class MessagesController extends Controller {
 				$member->notify(new SendEmail($data,$subject));
 				$messageLines[] = "Sent an email message to: ".$member->first." ".$member->last.".";
 				break;
-			case Both:
+			case 'Both':
 				$member->notify(new SendSMS($data));
 				$messageLines[] = "Sent an sms message to: ".$member->first." ".$member->last.".";
 				$member->notify(new SendEmail($data,$subject));
