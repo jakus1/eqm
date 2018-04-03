@@ -28,6 +28,11 @@
 			</div>
 
 			<div class="form-group">
+				{!! Form::label('member-tags', 'Tags:') !!}
+				{!! Form::text('member-tags', null, ['class' => 'form-control']) !!}
+			</div>
+
+			<div class="form-group">
 				{!! Form::submit('Create Member', ['class' => 'btn btn-primary']) !!}
 			</div>
 

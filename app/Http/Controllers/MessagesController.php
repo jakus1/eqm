@@ -70,8 +70,8 @@ class MessagesController extends Controller {
 	{
 		$data = request()->all();
 
-		$this->validate($data, [
-			'tags' => 'sometimes',
+		$this->validate(request(), [
+			/*'tags' => 'required',*/
 			'subject' => 'sometimes',
 			'body' => 'required'
 		]);
@@ -84,6 +84,7 @@ class MessagesController extends Controller {
 		$communicationId = request('communication_id');
 
 		$tags = Tag::with('taggable')->whereIn('tag',$queriedTags)->get();
+		$messageLines = [];
 		foreach($tags as $tag) {
 			if (!$tag->taggable instanceof Member) {
 				continue;
@@ -92,7 +93,7 @@ class MessagesController extends Controller {
 			$messageLines[] = $this->sendMessage($member, $communicationId, $data['subject'], $data['body']);
 		}
 		
-		return view('message.sent', ['messages' => $messageLines]);
+		return view('message.sent', ['messageLines' => $messageLines]);
 	}
 
 	protected function sendMessage($member, $communicationId, $subject, $body) {

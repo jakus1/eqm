@@ -11,6 +11,7 @@
         <a class="blog-nav-item pull-right" href="/user/{{ Auth::user()->id }}">{{ Auth::user()->name }}</a>
         <a class="blog-nav-item pull-right" href="/logout">Logout</a>
         <a class="blog-nav-item pull-right" href="/member/create">Create Member</a>
+        <a class="blog-nav-item pull-right" href="/message/create">Create Message</a>
       @else
         <a class="blog-nav-item pull-right" href="/user/create">Create User</a>
         <a class="blog-nav-item pull-right" href="/login">Login</a>

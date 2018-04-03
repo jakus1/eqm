@@ -29,8 +29,8 @@
 			</div>
 
 			<div class="form-group">
-				{!! Form::submit('Submit Message', ['class' => 'btn btn-primary pull-right', 'style' => 'margin: 0 6px']) !!}
-				<a href="{{ action('MembersController@index') }}" class="btn btn-primary pull-right">Cancel</a>
+				{!! Form::submit('Submit Message', ['class' => 'btn btn-primary pull-right']) !!}
+				<a href="{{ action('MembersController@index') }}" class="add-button-spacing btn btn-primary pull-right">Cancel</a>
 			</div>
 
 			<div class="form-group">
