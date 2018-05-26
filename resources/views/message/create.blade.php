@@ -5,7 +5,11 @@
 		<h1>Create a message</h1>
 
 		<hr>
-
+		@if((isset($tags)))
+			@foreach($tags as $tag)
+				<span class="label label-primary">{{$tag->tag}}</span>
+			@endforeach
+		@endif
 		{!! Form::open(['action' => 'MessagesController@store']) !!}
 			<!-- POST method implied -->
 			<div class="form-group">

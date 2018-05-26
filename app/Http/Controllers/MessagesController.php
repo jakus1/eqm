@@ -47,7 +47,8 @@ class MessagesController extends Controller {
 	 */
 	public function create()
 	{
-		return view('message.create');
+		$tags = Tag::where('taggable_type','App\Models\Member')->groupBy('tag')->selectRaw('COUNT(*) as qty, tag')->get();
+		return view('message.create', compact('tags'));
 	}
 
 	/**
@@ -69,38 +70,47 @@ class MessagesController extends Controller {
 	public function store()
 	{
 		$data = request()->all();
-
 		$this->validate(request(), [
 			'tags' => 'required',
 			'subject' => 'sometimes',
 			'body' => 'required'
-		]);
-		
-		$members = Member::all();
-		$messageTags = $data['tags'];
-
-		$queriedTags = explode(" ",$data['tags']);
-
-		$communicationId = request('communication_id');
-
-		$tags = Tag::with('taggable')->whereIn('tag',$queriedTags)->get();
+			]);
+			
+			// return $data;
 		$messageLines = [];
-		foreach($tags as $tag) {
+
+		$communicationType = request('communication_type');
+
+		if ($data['tags'] == 'service') {
+			// Log::info('FOUND THE SERVICE TAG');
+			// dd($data);
+			foreach (Member::where('status', 'Active')->get() as $member) {
+				$messageLines += $this->sendMessage($member, $communicationType, $data['subject'], $data['body']);
+			}
+			return view('message.sent', ['messageLines' => $messageLines]);
+		}
+		// dd('did not find it');
+		$queriedTags = explode(" ", $data['tags']);
+
+
+		$tags = Tag::with('taggable')->whereIn('tag', $queriedTags)->get();
+		
+		foreach ($tags as $tag) {
 			if (!$tag->taggable instanceof Member) {
 				continue;
 			}
 			$member = $tag->taggable;
-			$messageLines[] = $this->sendMessage($member, $communicationId, $data['subject'], $data['body']);
+			$messageLines += $this->sendMessage($member, $communicationType, $data['subject'], $data['body']);
 		}
 		return view('message.sent', ['messageLines' => $messageLines]);
 	}
 
-	protected function sendMessage($member, $communicationId, $subject, $body) {
+	protected function sendMessage($member, $communicationType, $subject, $body) {
 		$data = [
 			'stripped-text' => $body,
 			'sender' => auth()->user()->email
 		];
-		switch($communicationId) {
+		switch ($communicationType) {
 			case 'SMS':
 				$member->notify(new SendSMS($data));
 				$messageLines[] = "Sent an sms message to: ".$member->first." ".$member->last.".";
@@ -117,7 +127,8 @@ class MessagesController extends Controller {
 				break;
 		}
 
-		$new_message = $member->addMessage(request('subject'),request('body'));
+		$new_message = $member->addMessage(request('body'), request('subject'));
+		return $messageLines;
 	}
 
 	/**

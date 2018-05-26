@@ -30,6 +30,7 @@
         "symfony/thanks": "~1.0",
         "fzaninotto/faker": "~1.6",
         "jeroen-g/laravel-packager": "^1.5",
+        "squizlabs/php_codesniffer": "^3.0",
         "laracasts/generators": "dev-master"
     },
     "autoload": {

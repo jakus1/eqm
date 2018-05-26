@@ -2,12 +2,23 @@
 
 @section ('content')
 <div class="col-sm-8 blog-main">
-	@if (count($members))
-		<ul class="list-unstyled">
+	<table class="table table-striped">
+		<tr>
+			<th>Name</th>
+			<th>Email</th>
+			<th>Phone</th>
+			<th>Status</th>
+		</tr>
+		@if (count($members))
 			@foreach ($members as $member)
-				<li><a href="{{ action('MembersController@show', $member->id) }}"> {{ $member->first }} {{ $member->last }}</a></li>
+				<tr>
+					<td><a href="{{ action('MembersController@show', $member->id) }}"> {{ $member->first }} {{ $member->last }}</a></td>
+					<td>{{ $member->email }}</td>
+					<td>{{ $member->sms_phone }}</td>
+					<td>{{ $member->status }}</td>
+				</tr>
 			@endforeach
-		</ul>
-	@endif
+		@endif
+	</table>
 </div>
 @endsection
