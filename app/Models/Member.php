@@ -68,14 +68,9 @@ class Member extends Model
 	Relationships
 	##############################################################################################*/
 
-    public function messages()
+	public function messages()
 	{
 		return $this->hasMany(\App\Models\Message::class);
-	}
-
-	public function addMessage($subject, $body, $communication_id) 
-	{
-		return $this->messages()->create(compact('subject', 'body'));
 	}
 
 	/*##############################################################################################
@@ -90,13 +85,11 @@ class Member extends Model
 	 * @param  $q string
 	 * @return collection
 	 */
-	public function scopeBySearch($query,$q){
+	public function scopeBySearch($query, $q)
+	{
 
-		$query->where(function($qry) use ($q) {
-			$qry->where('id',$q)
-				// ->orWhere('another_column', 'like', '%' . $q . '%')
-				// ->orWhere('name', 'like', '%' . $q . '%')
-				;
+		$query->where(function ($qry) use ($q) {
+			$qry->where('id', $q);
 		});
 	}
 
@@ -170,13 +163,18 @@ class Member extends Model
 			'default_operator' => 'AND'
 		]);
 	}
-    /**
-     * Route notifications for the Nexmo channel.
-     *
-     * @return string
-     */
-    public function routeNotificationForNexmo()
-    {
-        return '1'.$this->sms_phone;
+	/**
+	 * Route notifications for the Nexmo channel.
+	 *
+	 * @return string
+	 */
+	public function routeNotificationForNexmo()
+	{
+		return '1'.$this->sms_phone;
+	}
+
+	public function addMessage($body, $subject = '', $communication_id = null)
+	{
+		return $this->messages()->create(compact('subject', 'body'));
 	}
 }

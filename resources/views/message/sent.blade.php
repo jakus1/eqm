@@ -5,7 +5,7 @@
 	@if (count($messageLines))
 		<ul class="list-unstyled">
 			@foreach ($messageLines as $messageLine)
-				<li>$messageLine</li>
+				<li>{{ $messageLine }}</li>
 			@endforeach
 		</ul>
 	@endif

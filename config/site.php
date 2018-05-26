@@ -1,10 +1,7 @@
 <?php
 
 return [
-    'sms_forward_emails' => [
-    	'jeremy_browne@byu.edu',
-    	'mapleton6@jakebarlow.com',
-    	'austinsperry@gmail.com',
-    ],
-
+	'sms_forward_emails' => [
+		'mapleton6@jakebarlow.com',
+	],
 ];
