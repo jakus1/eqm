@@ -1,31 +1,41 @@
-@extends('layouts.modal')
-
-@section('title')
-Create New Message
-@stop
-
-@section('header')
-@parent
-	{!! HTML::ul($errors->all() ) !!}
-	{!! Form::open(['action' => '\App\Http\Controllers\ApiController@postMessage','id'=>'modalForm']) !!}
-	<input name="c7token" type="hidden" value="{{ csrf_token() }}" data-ng-init="bind._token='{{ csrf_token() }}'"  data-ng-model="bind._token">
-@stop
+@extends ('layouts.master')
 
 @section('content')
-	<div class="row">
-		<div class="col-md-12">
-			<div class="form-group">
-				{!! Form::label('body', 'Body') !!}
-				{!! Form::text('body', null, array('class' => 'form-control','data-ng-model'=>'bind.body','placeholder'=>'Enter Body')) !!}
-			</div>
-		</div>	
-	</div>
-@stop
+	<div class="col-sm-8 blog-main">
+		<h1>Create a message</h1>
 
-@section('buttons')
-	<div class="form-group text-center">
-		{!! Form::button('Create Message', array('class' => 'btn btn-success','ng-click'=>'ok($event)')) !!}
-		{!! Form::button('Cancel',array('class'=>'btn cancel','ng-click'=>'$dismiss()','data-dismiss'=>'modal')) !!}
+		<hr>
+
+		{!! Form::open(['action' => 'MessagesController@store']) !!}
+			<!-- POST method implied -->
+			<div class="form-group">
+				{!! Form::label('tags', 'Tags:') !!}
+				{!! Form::text('tags', null, ['class' => 'form-control']) !!}
+			</div>
+
+			<div class="form-group">
+				{!! Form::label('communication_type', 'Communication Type:') !!}
+				{!! Form::select('communication_type', ['SMS' => 'SMS', 'Email' => 'Email', 'Both' => 'Both'], 'S', ['class' => 'form-control']) !!}
+			</div>	
+			
+			<div class="form-group">
+				{!! Form::label('subject', 'Subject:') !!}
+				{!! Form::text('subject', null, ['class' => 'form-control']) !!}
+			</div>
+
+			<div class="form-group">
+				{!! Form::label('body', 'Message Body:') !!}
+				{!! Form::textarea('body', null, ['class' => 'form-control']) !!}
+			</div>
+
+			<div class="form-group">
+				{!! Form::submit('Submit Message', ['class' => 'btn btn-primary pull-right']) !!}
+				<a href="{{ action('MembersController@index') }}" class="add-button-spacing btn btn-primary pull-right">Cancel</a>
+			</div>
+
+			<div class="form-group">
+				@include ('layouts.errors')
+			</div>
+		{!! Form::close() !!}
 	</div>
-   {!! Form::close() !!}
-@stop
+@endsection

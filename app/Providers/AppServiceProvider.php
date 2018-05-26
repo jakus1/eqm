@@ -23,8 +23,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        if ($this->app->environment('local')) {
-            $this->app->register('Cubicle7\LaravelScaffold\GeneratorsServiceProvider');
-        }
+        // if ($this->app->environment('local')) {
+        //     $this->app->register('Cubicle7\LaravelScaffold\GeneratorsServiceProvider');
+        // }
     }
 }

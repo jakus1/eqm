@@ -18,6 +18,7 @@ class DevelopController extends Controller
 {
 	public function getJake()
 	{
+		// return Member::withTrashed()->get();
 		$filename = "temp/roster.csv";
 		dispatch(new ImportUploadedFile($filename));
 		return dd(config());

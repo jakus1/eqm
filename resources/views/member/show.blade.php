@@ -1,56 +1,31 @@
-@extends('layouts.default')
+@extends ('layouts.master')
 
-@section('title')
-Member 
-@stop
-@section('page-id-container')
-	<small># <span ng-bind="memberctrl.member.id"></span></small>
-@stop
+@section ('content')
+<div class="col-sm-8 blog-main">
+	<ul class="list-unstyled">
+		<li><strong>Name: </strong>{{ $member->first }} {{ $member->last }}</li>
+		<li><strong>Email: </strong>{{ $member->email }}</li>
+		<li><strong>Phone: </strong>{{ $member->sms_phone }}</li>
+	</ul>
+	Edit <a href="{{ action('MembersController@edit', $member->id) }}">{{ $member->first }}</a>
 
-@section('ang-controller') ng-controller="MemberCtrl as memberctrl" data-ng-init="memberctrl.getMember('{{$the_record->id}}');" 
-@stop
+	<hr>
 
-
-@section('data')
-<div class="row">
-	<div class="col-md-12">
-		<div class="ibox float-e-margins">
-			<div class="ibox-content">
-				<pre><span ng-bind="memberctrl.member | json"></span></pre>
-			</div>
-		</div>
+	<div class="comments">
+		<ul>
+		@foreach ($member->messages as $message)
+			<li class="list-group-item">
+				<strong>
+					{{ $message->created_at->diffForHumans() }} &nbsp;
+				</strong>
+				<a href="action('MembersController@show', $member) {{$member->last}}</a>:
+				<br>
+				<h3> {{ $message->subject }}</h3>
+				<br>
+				{{ $message->body }}
+			</li>
+		@endforeach
+	</ul>
 	</div>
 </div>
-<div class="row">
-	<div class="col-lg-8">
-		{!! Core::_include_module('mvmnt::modules.journals',$the_record) !!}  
-	</div>
-	<div class="col-lg-4">
-		{!! Core::_include_module('mvmnt::modules.attachments',$the_record) !!} 
-	</div>
-</div>
-<div class="row">
-	<div class="col-lg-4">
-		{!! Core::_include_module('mvmnt::modules.tags',$the_record) !!} 
-	</div>
-	<div class="col-lg-4">
-		{!! Core::_include_module('mvmnt::modules.addresses',$the_record) !!} 
-	</div>
-	<div class="col-lg-4">
-		{!! Core::_include_module('mvmnt::modules.phones',$the_record) !!}  
-	</div>
-</div>
-<div class="row">
-	<div class="col-lg-4">
-		{!! Core::_include_module('mvmnt::modules.changes',$the_record) !!} 
-	</div>
-	<div class="col-lg-4">
-		{!! Core::_include_module('mvmnt::modules.approvals',$the_record) !!}  
-	</div>
-</div>
-@stop
-
-@section('html_footer')
-@parent
-
-@stop
+@endsection

@@ -24,7 +24,6 @@ class TagsController extends BaseController {
 	 */
 	public function index()
 	{
-		// $tags = Tag::all();
 		return view('tag.index');
 	}
 
