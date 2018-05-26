@@ -60,6 +60,7 @@ class MembersController extends Controller
 			'first' => 'required',
 			'last' => 'required',
 			'email' => 'required|email',
+			'member-tags' => 'required',
 			// FIXME: Need to check for something other than numeric here
 			'sms_phone' => "required|numeric"
 		]);
@@ -70,6 +71,11 @@ class MembersController extends Controller
 		$member->last = request('last');
 		$member->email = request('email');
 		$member->sms_phone = request('sms_phone');
+		$tags = explode(" ", request('member-tags'));
+
+		foreach($tags as $tag){
+			$member->tags()->create(['tag'=>$tag]);
+		}
 
 		$member->save();
 

@@ -4,6 +4,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+use App\Notifications\SendSMS;
+use App\Notifications\SendEmail;
+
 use App\Traits\Models\TagTrait;
 use Carbon\Carbon;
 
@@ -68,6 +71,11 @@ class Member extends Model
     public function messages()
 	{
 		return $this->hasMany(\App\Models\Message::class);
+	}
+
+	public function addMessage($subject, $body, $communication_id) 
+	{
+		return $this->messages()->create(compact('subject', 'body'));
 	}
 
 	/*##############################################################################################
