@@ -85,7 +85,7 @@ class MessagesController extends Controller {
 			// Log::info('FOUND THE SERVICE TAG');
 			// dd($data);
 			foreach (Member::where('status', 'Active')->get() as $member) {
-				$messageLines += $this->sendMessage($member, $communicationType, $data['subject'], $data['body']);
+				$messageLines = array_merge($messageLines, $this->sendMessage($member, $communicationType, $data['subject'], $data['body']));
 			}
 			return view('message.sent', ['messageLines' => $messageLines]);
 		}
@@ -100,30 +100,40 @@ class MessagesController extends Controller {
 				continue;
 			}
 			$member = $tag->taggable;
-			$messageLines += $this->sendMessage($member, $communicationType, $data['subject'], $data['body']);
+			$messageLines = array_merge($messageLines, $this->sendMessage($member, $communicationType, $data['subject'], $data['body']));
 		}
 		return view('message.sent', ['messageLines' => $messageLines]);
 	}
 
-	protected function sendMessage($member, $communicationType, $subject, $body) {
+	protected function sendMessage($member, $communicationType, $subject, $body)
+	{
 		$data = [
 			'stripped-text' => $body,
-			'sender' => auth()->user()->email
+			'sender' => auth()->user()->email,
+			'from' => auth()->user()->name,
 		];
 		switch ($communicationType) {
 			case 'SMS':
-				$member->notify(new SendSMS($data));
-				$messageLines[] = "Sent an sms message to: ".$member->first." ".$member->last.".";
+				if ($member->receives_text) {
+					$member->notify(new SendSMS($data));
+					$messageLines[] = "Sent an sms message to: ".$member->first." ".$member->last.".";
+				}
 				break;
 			case 'Email':
-				$member->notify(new SendEmail($data,$subject));
-				$messageLines[] = "Sent an email message to: ".$member->first." ".$member->last.".";
+				if ($member->receives_email) {
+					$member->notify(new SendEmail($data, $subject));
+					$messageLines[] = "Sent an email message to: ".$member->first." ".$member->last.".";
+				}
 				break;
 			case 'Both':
-				$member->notify(new SendSMS($data));
-				$messageLines[] = "Sent an sms message to: ".$member->first." ".$member->last.".";
-				$member->notify(new SendEmail($data,$subject));
-				$messageLines[] = "Sent an email message to: ".$member->first." ".$member->last.".";
+				if ($member->receives_text) {
+					$member->notify(new SendSMS($data));
+					$messageLines[] = "Sent an sms message to: ".$member->first." ".$member->last.".";
+				}
+				if ($member->receives_email) {
+					$member->notify(new SendEmail($data, $subject));
+					$messageLines[] = "Sent an email message to: ".$member->first." ".$member->last.".";
+				}
 				break;
 		}
 

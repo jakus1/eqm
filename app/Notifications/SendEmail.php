@@ -1,7 +1,6 @@
-<?php
+<?php namespace App\Notifications;
 
-namespace App\Notifications;
-
+use App\Mail\MemberMessage;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -44,13 +43,10 @@ class SendEmail extends Notification implements ShouldQueue
 	public function toMail($notifiable)
 	{
 		$subject = (strlen(trim($this->subject)) > 2 )?$this->subject:'Take a look';
-		return (new MailMessage)
-					->replyTo($this->incoming_request['sender'])
-					->subject($subject)
-					->line('Hey,')
-					->line($this->incoming_request['stripped-text'])
-					// ->action('Notification Action', url('/'))
-					->line('Thanks for all you do!');
+		return (new MemberMessage($this->incoming_request))
+			->to($notifiable->email)
+			->replyTo($this->incoming_request['sender'])
+			->subject($subject);
 	}
 
 	/**
