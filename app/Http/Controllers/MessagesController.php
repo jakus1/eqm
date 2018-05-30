@@ -112,6 +112,7 @@ class MessagesController extends Controller {
 			'sender' => auth()->user()->email,
 			'from' => auth()->user()->name,
 		];
+		$messageLines = [];
 		switch ($communicationType) {
 			case 'SMS':
 				if ($member->receives_text) {
