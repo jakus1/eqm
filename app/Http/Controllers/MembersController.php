@@ -35,7 +35,7 @@ class MembersController extends Controller
 	 */
 	public function index() 
 	{
-		$members = Member::all();
+		$members = Member::all()->sortBy('last');
 		return view('member.index', compact('members'));
 	}
 
@@ -71,6 +71,7 @@ class MembersController extends Controller
 		$member->last = request('last');
 		$member->email = request('email');
 		$member->sms_phone = request('sms_phone');
+		$member->save();
 		$tags = explode(" ", request('member-tags'));
 
 		foreach($tags as $tag){
@@ -94,17 +95,12 @@ class MembersController extends Controller
 		$this->validate(request(), [
 			'first' => 'required',
 			'last' => 'required',
-			'email' => 'required|email',
+			// 'email' => 'sometimes|email',
 			// FIXME: Need to check for something other than numeric here
-			'sms_phone' => "required|numeric"
+			// 'sms_phone' => "sometimes|numeric"
 		]);
 
-		$member->first = request('first');
-		$member->last = request('last');
-		$member->email = request('email');
-		$member->sms_phone = request('sms_phone');
-
-		$member->save();
+		$member->update(request()->all());
 
 		// Redirect back to home page
 		return redirect()->action('MembersController@show', $member); 

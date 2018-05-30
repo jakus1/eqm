@@ -46,52 +46,56 @@ class ProcessIncomingMailgun implements ShouldQueue
 		$subject = $this->data['subject'];
 		$verbs = [];
 		$service = false;
-		if(str_contains(strtolower($subject), 'sms ')) {
+		if (str_contains(strtolower($subject), 'sms ')) {
 			$verbs[] = 'sms';
 		}
-		if(str_contains(strtolower($subject), 'email ')) {
+		if (str_contains(strtolower($subject), 'email ')) {
 			$verbs[] = 'email';
 		}
-		if(str_contains(strtolower($subject), 'svc ')) {
+		if (str_contains(strtolower($subject), 'svc ')) {
 			$service = true;
 		}
 
-		if(count($verbs) == 0) {
+		if (count($verbs) == 0) {
 			Log::error('NO VERB FOUND in: '.$subject);
 			return;
 		}
 		$find = ['sms','email','svc'];
 		$replace = ['','',''];
-		$subject = str_replace($find,$replace,$subject);
+		$subject = str_replace($find, $replace, $subject);
 		$subject = trim($subject);
-		$parts = explode(" ",$subject);
+		$parts = explode(" ", $subject);
 		$tags = [];
-		foreach($parts as $part) {
+		foreach ($parts as $part) {
 			if (trim($part) == '') continue;
-			$membersqry = Tag::with('taggable')->where('tag',trim($part));
-			if($membersqry->count() == 0) {
+			$membersqry = Tag::with('taggable')->where('tag', trim($part));
+			if ($membersqry->count() == 0) {
 				continue;
 			}
-			$subject = trim(str_replace($part,'',$subject));
+			$subject = trim(str_replace($part, '', $subject));
 			$tags[$part] = $part;
 		}
-		$result = Tag::with('taggable')->whereIn('tag',$tags)->get();
+		$result = Tag::with('taggable')->whereIn('tag', $tags)->get();
 		$members = $result->pluck('taggable')->all();
-		if($service) {
-			$members = Member::where('status','Active')->get();
+		if ($service) {
+			$members = Member::where('status', 'Active')->get();
 		}
-		if(in_array('sms',$verbs)) {
+		if (in_array('sms', $verbs)) {
 			// do the sms part
-			foreach($members as $member) {
-				$member->notify(new SendSMS($data));
-				$messageLines[] = "Sent an sms message to: ".$member->first." ".$member->last.".";
+			foreach ($members as $member) {
+				if ($member->receives_text) {
+					$member->notify(new SendSMS($data));
+					$messageLines[] = "Sent an sms message to: ".$member->first." ".$member->last.".";
+				}
 			}
 		}
-		if(in_array('email',$verbs)) {
+		if (in_array('email', $verbs)) {
 			// do the email part
-			foreach($members as $member) {
-				$member->notify(new SendEmail($data,$subject));
-				$messageLines[] = "Sent an email message to: ".$member->first." ".$member->last.".";
+			foreach ($members as $member) {
+				if ($member->receives_email) {
+					$member->notify(new SendEmail($data, $subject));
+					$messageLines[] = "Sent an email message to: ".$member->first." ".$member->last.".";
+				}
 			}
 		}
 		Mail::to('jake@barlowshomes.com')

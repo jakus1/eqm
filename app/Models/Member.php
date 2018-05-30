@@ -61,7 +61,9 @@ class Member extends Model
 		'email',
 		'status',
 		'sms_phone',
-		'description'
+		'description',
+		'receives_email',
+		'receives_text',
 	];
 
 	/*##############################################################################################
